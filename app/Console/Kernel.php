@@ -29,6 +29,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $startLowLoadPeriod = '00:15';
+        $endLowLoadPeriod = '05:00';
+
+        $schedule->command('forms:fix')->withoutOverlapping()->everyMinute()->between($startLowLoadPeriod, $endLowLoadPeriod);
+        $schedule->command('forms:transfer')->withoutOverlapping()->everyMinute()->between($startLowLoadPeriod, $endLowLoadPeriod);
+        $schedule->command('forms:restore-foreign')->withoutOverlapping()->everyMinute()->between($startLowLoadPeriod, $endLowLoadPeriod);
         $schedule->command('companies:inspect')->monthlyOn(1, '6:00');
         $schedule->command("run:briefings")->monthlyOn(10, '10:00');
     }

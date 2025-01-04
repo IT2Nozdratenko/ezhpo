@@ -2,24 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\User\CreateUserHandler;
 use App\Company;
 use App\FieldPrompt;
-use App\GenerateHashIdTrait;
 use App\Town;
 use App\User;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Throwable;
 
 class UserController extends Controller
 {
-    use GenerateHashIdTrait;
-
     public function __construct()
     {
         $this->middleware('auth');
@@ -36,6 +32,7 @@ class UserController extends Controller
             ->where(function ($query) use ($request) {
                 $query->whereDoesntHave('roles')
                     ->orWhereHas('roles', function ($q) use ($request) {
+                        //TODO: замнеить на енам
                         $q->whereNotIn('roles.id', [3, 6, 9]);
                     });
             });
@@ -96,6 +93,10 @@ class UserController extends Controller
 
         $pointsToTable = $points->map(function ($model) {
             $option['label'] = $model->name;
+
+            if (!count($model->pvs)) {
+                $option['options'] = [];
+            }
 
             foreach ($model->pvs as $pv){
                 $option['options'][] = [
@@ -168,7 +169,7 @@ class UserController extends Controller
      * */
     public function fetchUserData(Request $request): JsonResponse
     {
-        $result = User::query()
+        $result = User::withTrashed()
             ->with([
                 'roles',
                 'roles.permissions',
@@ -202,122 +203,29 @@ class UserController extends Controller
      * Создаёт/обновляет данные пользователя
      *
      * @param Request $request
-     *
+     * @param CreateUserHandler $handler
      * @return JsonResponse
-     * @throws Exception
      */
-    public function saveUser(Request $request): JsonResponse
+    public function saveUser(Request $request, CreateUserHandler $handler): JsonResponse
     {
-        $userIsClient = array_search(6, $request->get('roles', []));
-        if ($userIsClient) {
-            $pv = null;
-            $company = $request->get('company');
-        } else {
-            $company = null;
-            $pv = $request->get('pv');
-        }
+        try {
+            $user = $handler->handle($request->all());
 
-        $userId = $request->get('user_id');
-
-        $rules = [
-            'password' => [
-                'required_without:user_id',
-                'nullable',
-                'string',
-                'min:1',
-                'max:255'
-            ],
-            'email' => [
-                'required',
-                'string',
-                'min:1',
-                'max:255',
-                empty($userId)
-                    ? Rule::unique('users')
-                    : Rule::unique('users')->ignore($userId),
-                empty($userId)
-                    ? Rule::unique('users', 'login')
-                    : Rule::unique('users', 'login')->ignore($userId),
-            ],
-            'login' => [
-                'nullable',
-                'string',
-                'min:1',
-                'max:255',
-                empty($userId)
-                    ? Rule::unique('users')
-                    : Rule::unique('users')->ignore($userId),
-            ]
-        ];
-
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
+            return response()->json([
+                'status' => true,
+                'user_info' => $user,
+            ]);
+        } catch (ValidationException $exception) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors(),
+                'message' => $exception->errors(),
+            ]);
+        } catch (Throwable $exception) {
+            return response()->json([
+                'status' => false,
+                'message' => $exception->getMessage(),
             ]);
         }
-
-        if (empty($userId)) {
-            $user = new User();
-
-            $validator = function (int $hashId) {
-                if (User::where('hash_id', $hashId)->first()) {
-                    return false;
-                }
-
-                return true;
-            };
-
-            $user->hash_id = $this->generateHashId(
-                $validator,
-                config('app.hash_generator.user.min'),
-                config('app.hash_generator.user.max'),
-                config('app.hash_generator.user.tries')
-            );
-        } else {
-            $user = User::find($userId);
-        }
-
-        if ($password = $request->get('password')) {
-            $password = Hash::make($password);
-            $apiToken = Hash::make(date('H:i:s') . sha1($password));
-
-            $user->password = $password;
-            $user->api_token = $apiToken;
-        }
-
-        $user->name = $request->get('name');
-        $user->email = $request->get('email');
-        $user->eds = $request->get('eds');
-        $user->timezone = $request->get('timezone');
-        $user->blocked = $request->get('blocked', 0);
-        $user->validity_eds_start = $request->get('validity_eds_start');
-        $user->validity_eds_end = $request->get('validity_eds_end');
-        $user->login = $request->get('login') ?? $request->get('email');
-
-        $user->save();
-
-        $user->roles()->sync($request->get('roles', []));
-        $user->permissions()->sync($request->get('permissions', []));
-        $user->points()->sync($request->get('pvs', []));
-        $user->company()->associate($company);
-        $user->pv()->associate($pv);
-        $user->save();
-
-        $user = User::query()
-            ->with([
-                'roles',
-                'permissions',
-                'pv'
-            ])
-            ->find($user->id);
-
-        return response()->json([
-            'status' => true,
-            'user_info' => $user,
-        ]);
     }
 
     /**
