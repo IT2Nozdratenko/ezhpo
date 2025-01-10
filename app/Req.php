@@ -22,6 +22,8 @@ class Req extends Model
             'signature',
             'seal',
             'deleted_id',
+            'deleted_at',
+            'auto_created'
         ];
 
     public function delete()

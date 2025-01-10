@@ -73,7 +73,10 @@ class CreateDriverHandler extends AbstractCreateElementHandler implements Create
         /** @var Driver $created */
         $created = $this->createElement($data);
 
-        event(new ClientAddRecord(Auth::user(), UserActionTypesEnum::ADD_DRIVER_VIA_FORM));
+        $user = Auth::user();
+        if ($user) {
+            event(new ClientAddRecord($user, UserActionTypesEnum::ADD_DRIVER_VIA_FORM));
+        }
 
         UserService::createUserFromDriver($created);
 
@@ -91,6 +94,8 @@ class CreateDriverHandler extends AbstractCreateElementHandler implements Create
         if ($company->required_type_briefing) {
             BriefingService::createFirstBriefingForDriver($created, $company);
         }
+
+        return $created;
     }
 
     protected function createFirstBriefing(Driver $created)

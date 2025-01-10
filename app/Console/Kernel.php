@@ -29,8 +29,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $startLowLoadPeriod = '00:15';
-        $endLowLoadPeriod = '05:00';
+        $startLowLoadPeriod = config('forms.low-load-period.start', '00:15');
+        $endLowLoadPeriod = config('forms.low-load-period.end', '05:00');
 
         $schedule->command('forms:fix')->withoutOverlapping()->everyMinute()->between($startLowLoadPeriod, $endLowLoadPeriod);
         $schedule->command('forms:transfer')->withoutOverlapping()->everyMinute()->between($startLowLoadPeriod, $endLowLoadPeriod);

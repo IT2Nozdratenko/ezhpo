@@ -80,10 +80,6 @@ class Anketa extends Model
                     ->withDefault();
     }
 
-    protected $casts = [
-        'deleted_at' => 'datetime:d-m-Y H:i:s'
-    ];
-
     public $fillable
         = [
             // all
@@ -170,6 +166,8 @@ class Anketa extends Model
             'connected_hash',
             'contract_id',
             'contract_snapshot_id',
+            'transfer_status',
+            'fix_status'
         ];
 
     public static $anketsKeys

@@ -109,6 +109,8 @@ class FixFormDataCommand extends Command
 
                 $form = Form::withTrashed()->find($anketa->uuid);
                 if (!$form) {
+                    DB::commit();
+
                     continue;
                 }
 

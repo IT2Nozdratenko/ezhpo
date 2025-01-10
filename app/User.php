@@ -47,7 +47,9 @@ class User extends Authenticatable
             'stamp_id',
             'validity_eds_start',
             'validity_eds_end',
-            'accepted_agreement'
+            'accepted_agreement',
+            'deleted_at',
+            'auto_created'
         ];
 
     protected $hidden = [

@@ -28,6 +28,6 @@ class CreateProductHandler extends AbstractCreateElementHandler implements Creat
             $data['type_view'] = null;
         }
 
-        $this->createElement($data);
+        return $this->createElement($data);
     }
 }

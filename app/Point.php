@@ -16,7 +16,8 @@ class Point extends Model
             'name',
             'pv_id',
             'company_id',
-            'deleted_id',
+            'deleted_at',
+            'auto_created'
         ];
 
     public static function getPointText($id = 0)

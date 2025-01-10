@@ -34,6 +34,8 @@ class Car extends Model
             'autosync_fields',
             'contract_id',
             'deleted_id',
+            'auto_created',
+            'deleted_at'
         ];
 
     public function inspections_tech(): HasMany

@@ -26,6 +26,6 @@ class CreateDefaultHandler extends AbstractCreateElementHandler implements Creat
             config('app.hash_generator.default.tries', 2)
         );
 
-        $this->createElement($data);
+        return $this->createElement($data);
     }
 }

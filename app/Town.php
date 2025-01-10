@@ -17,6 +17,8 @@ class Town extends Model
             'hash_id',
             'name',
             'deleted_id',
+            'deleted_at',
+            'auto_created'
         ];
 
     public function pvs(): HasMany

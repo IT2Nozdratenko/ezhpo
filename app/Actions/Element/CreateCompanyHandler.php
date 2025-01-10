@@ -55,6 +55,8 @@ class CreateCompanyHandler extends AbstractCreateElementHandler implements Creat
         $created = $this->createElement($data);
 
         $this->createUser($created);
+
+        return $created;
     }
 
     protected function getUserLogin(string $hashId): string

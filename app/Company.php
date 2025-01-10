@@ -34,7 +34,9 @@ class Company extends Model
         'deleted_id',
         'pressure_systolic',
         'pressure_diastolic',
-        'link_waybill'
+        'link_waybill',
+        'auto_created',
+        'deleted_at'
     ];
 
     public static function getAll()

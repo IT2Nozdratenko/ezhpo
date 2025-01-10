@@ -60,7 +60,10 @@ class CreateCarHandler extends AbstractCreateElementHandler implements CreateEle
 
         $created = $this->createElement($data);
 
-        event(new ClientAddRecord(Auth::user(), UserActionTypesEnum::ADD_CAR_VIA_FORM));
+        $user = Auth::user();
+        if ($user) {
+            event(new ClientAddRecord($user, UserActionTypesEnum::ADD_CAR_VIA_FORM));
+        }
 
         /** @var Contract $contract */
         $contract = Contract::query()
@@ -72,5 +75,7 @@ class CreateCarHandler extends AbstractCreateElementHandler implements CreateEle
             $contract->cars()->attach($created->id);
             event(new Attached($contract, [$created->id], Car::class));
         }
+
+        return $created;
     }
 }

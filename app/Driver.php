@@ -43,6 +43,8 @@ class Driver extends Model
         'deleted_id',
         'pressure_systolic',
         'pressure_diastolic',
+        'auto_created',
+        'deleted_at'
     ];
 
     protected $casts = [
