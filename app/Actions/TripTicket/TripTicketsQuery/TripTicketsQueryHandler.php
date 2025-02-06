@@ -35,7 +35,7 @@ final class TripTicketsQueryHandler
             'companies.name as company_name',
             'drivers.fio as driver_name',
             'cars.gos_number as car_number',
-            'users.name as deleted_user_name'
+            'deleted_users.name as deleted_user_name'
         ])
             ->leftJoin(
                 'companies',
@@ -56,8 +56,8 @@ final class TripTicketsQueryHandler
                 'trip_tickets.car_id',
             )
             ->leftJoin(
-                'users',
-                'users.id',
+                'users as deleted_users',
+                'deleted_users.id',
                 '=',
                 'trip_tickets.deleted_id'
             )
