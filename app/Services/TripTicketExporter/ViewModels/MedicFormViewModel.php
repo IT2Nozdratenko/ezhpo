@@ -31,7 +31,7 @@ final class MedicFormViewModel
     ) {
         $this->date = $date;
         $this->username = $username;
-        $this->stamp = $stamp;
+        $this->stamp = $stamp ?? StampViewModel::default();
     }
 
     public function getDate(): ?Carbon
@@ -44,7 +44,7 @@ final class MedicFormViewModel
         return $this->username;
     }
 
-    public function getStamp(): ?StampViewModel
+    public function getStamp(): StampViewModel
     {
         return $this->stamp;
     }

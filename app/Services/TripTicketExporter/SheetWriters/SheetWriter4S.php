@@ -121,13 +121,24 @@ final class SheetWriter4S implements SheetWriterInterface
     private function fillCompany(): self
     {
         $company = $this->data->getCompany();
-        $value = $company->getName();
 
-        if ($company->getWhereCall()) {
-            $value .= ', тел. ' . $company->getWhereCall();
+        $companyStringItems = [
+            $company->getName(),
+        ];
+
+        if ($company->getAddress()) {
+            $companyStringItems[] = $company->getAddress();
         }
 
-        $value .= '.';
+        if ($company->getOgrn()) {
+            $companyStringItems[] = 'ОГРН ' . $company->getOgrn();
+        }
+
+        if ($company->getWhereCall()) {
+            $companyStringItems[] = 'тел. ' . $company->getWhereCall();
+        }
+
+        $value = implode(", ", $companyStringItems);
 
         $this->sheet->setCellValue('J6', $value);
 
@@ -211,14 +222,11 @@ final class SheetWriter4S implements SheetWriterInterface
         }
 
         if (!$stamp) {
-            $stamp = new StampViewModel(
-                config('trip-ticket.print.4s.stamps.medic.reqName'),
-                config('trip-ticket.print.4s.stamps.medic.license'),
-            );
+            $stamp = StampViewModel::default();
         }
 
         $medicStamp = $stamp->getReqName() . "\n";
-        $medicStamp .= wordwrap($stamp->getLicense(), 32) . "\n";
+        $medicStamp .= wordwrap($stamp->getLicense(), 55) . "\n";
         $medicStamp .= config('trip-ticket.print.4s.stamps.medic.comment');
 
         $medicForm = $this->data->getMedicForm();

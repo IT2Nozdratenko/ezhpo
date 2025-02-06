@@ -13,6 +13,7 @@ class UpdateDriverHandler extends UpdateElementHandler
     {
         $this->setData($data);
         $this->findElement($id);
+        $this->validatePhone($data['phone']);
         $this->wrapNullFieldsToEmptyString();
         $this->updateFiles();
         $this->updateFields();
@@ -20,5 +21,12 @@ class UpdateDriverHandler extends UpdateElementHandler
         $this->resetEmptyFields();
         $this->element->save();
         $this->attachContracts();
+    }
+
+    private function validatePhone(string $phone = null)
+    {
+        if ($phone !== null && preg_match("/^[+\-\d\s]+$/", $phone) !== 1) {
+            throw new Exception('Ошибка! Неправильный формат телефона: '.$phone);
+        }
     }
 }

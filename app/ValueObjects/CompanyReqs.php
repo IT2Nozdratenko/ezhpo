@@ -101,10 +101,33 @@ class CompanyReqs
             && $this->isPersonalOgrnFormat();
     }
 
+    public function isPersonalToRestore(): bool
+    {
+        return $this->isPersonalInnFormat()
+            && ($this->isPersonalOgrnFormat() || $this->emptyOgrn());
+    }
+
     public function isOrganizationFormat(): bool
     {
         return $this->isOrganizationInnFormat()
             && $this->isOrganizationOgrnFormat()
             && $this->isOrganizationKppFormat();
+    }
+
+    public function isOrganizationToRestore(): bool
+    {
+        return $this->isOrganizationInnFormat()
+            && ($this->isOrganizationOgrnFormat() || $this->emptyOgrn())
+            && ($this->isOrganizationKppFormat() || $this->emptyKpp());
+    }
+
+    private function emptyOgrn(): bool
+    {
+        return $this->ogrn === "";
+    }
+
+    private function emptyKpp(): bool
+    {
+        return $this->kpp === "";
     }
 }

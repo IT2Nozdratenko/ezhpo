@@ -56,6 +56,11 @@ class Phone implements Stringable
     {
         $phone = preg_replace('/[^0-9]/', '', $this->native);
 
+        $firstNumber = $phone[0] ?? '';
+        if ((strlen($phone) === 10) && ($firstNumber === '9')) {
+            $phone = "7" . $phone;
+        }
+
         if (strlen($phone) !== 11) {
             $this->isValid = false;
 

@@ -466,8 +466,6 @@ return [
             'created_at',
             'flag_pak',
             'is_dop',
-            't_people',
-            'tonometer',
             'pulse',
             'period_pl',
             'date_prmo',

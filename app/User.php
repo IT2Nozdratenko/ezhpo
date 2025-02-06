@@ -218,4 +218,21 @@ class User extends Authenticatable
 
         return $userName;
     }
+
+    public function getStamp(): ?Stamp
+    {
+        /** @var Stamp|null $stamp */
+        $stamp = $this->stamp;
+        if ($stamp) {
+            return $stamp;
+        }
+
+        /** @var Point|null $point */
+        $point = $this->pv;
+        if ($point) {
+            return $point->getStamp();
+        }
+
+        return null;
+    }
 }

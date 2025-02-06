@@ -1402,6 +1402,14 @@ $(document).ready(function () {
             })
         });
     })
+
+    $('#CARD_DRIVER').on('input', 'input[name="phone"]', function() {
+        const input = $('#CARD_DRIVER input[name="phone"]')
+        input.val(input.val().replace(/[^+\-\d\s]/g, ''))
+        if (input.val().length > 5) {
+            input.val(input.val().slice(0, 18))
+        }
+    });
 });
 
 window.initDatePicker = initDatePicker

@@ -88,14 +88,14 @@ class ValidateCompaniesReqs extends Command
 
             $companyReqs = new CompanyReqs($inn, $kpp, $ogrn);
 
-            if ($companyReqs->isPersonalFormat()) {
+            if ($companyReqs->isPersonalToRestore()) {
                 $companyInfo = $companyReqsChecker->restoreCompany($companyReqs);
 
                 if ($companyInfo !== null) {
                     $company->setAttribute('ogrn', $companyInfo->getOgrn());
                     $company->setAttribute('address', $companyInfo->getAddress());
                 }
-            } else if ($companyReqs->isOrganizationFormat()) {
+            } else if ($companyReqs->isOrganizationToRestore()) {
                 $companyInfo = $companyReqsChecker->restoreCompany($companyReqs);
 
                 if ($companyInfo === null) {

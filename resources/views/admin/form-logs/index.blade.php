@@ -22,7 +22,7 @@
         window.PAGE_SETUP.tableDataUrl = '/admin/form-logs/list';
 
         window.PAGE_SETUP.MODEL_SEARCHER = {
-            tableDataUrl: '/admin/form-logs/get-form'
+            tableDataUrl: '/elements/search'
         }
     </script>
 @endpush

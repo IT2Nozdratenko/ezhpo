@@ -62,4 +62,9 @@ class Town extends Model
     {
         return $this->belongsTo(Stamp::class);
     }
+
+    public function getStamp(): ?Stamp
+    {
+        return $this->stamp;
+    }
 }

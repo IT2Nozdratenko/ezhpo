@@ -2,7 +2,9 @@
 
 namespace App\Models\Forms\ActionsPolicy\Policies;
 
+use App\Enums\FlagPakEnum;
 use App\Models\Forms\Form;
+use App\Models\TripTicket;
 use App\User;
 use App\Models\Forms\ActionsPolicy\Contracts\PolicyInterface;
 
@@ -66,6 +68,40 @@ class ByStatePolicy implements PolicyInterface
     {
         $this->disabledAttributesMap = [];
 
+        $this->disablePermanently();
+        $this->disableIfFilled();
+    }
+
+    private function disablePermanently()
+    {
+        $details = $this->form->details;
+
+        $permanentlyDisabledConditions = [];
+
+        /** Относится к ПЛ */
+        $permanentlyDisabledConditions[] = TripTicket::query()
+            ->where('medic_form_id', $this->form->id)
+            ->orWhere('tech_form_id', $this->form->id)
+            ->exists();
+
+        /** Относится к СДПО */
+        $permanentlyDisabledConditions[] = in_array(
+            $details->getAttribute('flag_pak'),
+            [FlagPakEnum::SDPO_R, FlagPakEnum::SDPO_A]
+        );
+
+        $permanentlyDisabled = in_array(true, $permanentlyDisabledConditions);
+        if (!$permanentlyDisabled) {
+            return;
+        }
+
+        foreach (array_merge($this->form->fillable, $details->fillable) as $attribute) {
+            $this->disabledAttributesMap[$attribute] = true;
+        }
+    }
+
+    private function disableIfFilled()
+    {
         $disabledIfFilled = [
             'driver_id',
             'company_id',
@@ -76,6 +112,8 @@ class ByStatePolicy implements PolicyInterface
         ];
 
         $details = $this->form->details;
+
+        /** Не "Ввод ПЛ" или "Утвержденный" ПЛ */
         if (!$details->is_dop || ($details->result_dop !== null)) {
             $disabledIfFilled[] = 'point_id';
             $disabledIfFilled[] = 'date';

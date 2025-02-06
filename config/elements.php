@@ -262,7 +262,7 @@ return [
             ],
             'phone' => [
                 'label' => 'Телефон',
-                'type' => 'number',
+                'type' => 'text',
                 'noRequired' => 1,
             ],
             'gender' => [
@@ -457,7 +457,7 @@ return [
                 'defaultValue' => 'Не установлено',
             ],
             'official_type_auto' => [
-                'label' => 'Категория Т\С (из документов)',
+                'label' => 'Тип Т\С',
                 'type' => 'text',
                 'noRequired' => 1
             ],

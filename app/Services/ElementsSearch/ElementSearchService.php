@@ -8,6 +8,7 @@ use App\Driver;
 use App\Dto\ElementDto;
 use App\Enums\LogModelTypesEnum;
 use App\Models\Contract;
+use App\Models\TripTicket;
 use App\Product;
 use App\Stamp;
 use App\User;
@@ -80,6 +81,14 @@ class ElementSearchService implements ElementsSearchServiceInterface
                 'id as hash_id',
                 'id',
                 'company_name as name'
+            ],
+            'fields' => []
+        ],
+        TripTicket::class => [
+            'select' => [
+                'id as hash_id',
+                'id',
+                'ticket_number as name'
             ],
             'fields' => []
         ]

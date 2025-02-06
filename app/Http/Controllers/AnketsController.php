@@ -25,6 +25,7 @@ use App\Models\Forms\ActionsPolicy\Policies\DisabledPolicy;
 use App\Models\Forms\Form;
 use App\Models\Forms\MedicForm;
 use App\Point;
+use App\Services\TripTicketExporter\ViewModels\StampViewModel;
 use App\Traits\UserEdsTrait;
 use App\User;
 use App\ValueObjects\ClientHash;
@@ -424,16 +425,12 @@ class AnketsController extends Controller
     public function print($id)
     {
         $form = Form::withTrashed()->findOrFail($id);
-
-        $stamp = null;
-        $terminal = User::find($form->terminal_id);
-        if ($terminal) {
-            $stamp = $terminal->stamp;
-        }
+        /** @var MedicForm $details */
+        $details = $form->details;
 
         $pdf = Pdf::loadView('docs.print', [
             'form' => $form,
-            'stamp' => $stamp,
+            'stamp' => StampViewModel::fromStampOrDefault($details->getStamp()),
             'user' => User::find($form->user_id),
             'validity' => UserEdsTrait::getValidityString(
                 $form->user_validity_eds_start,

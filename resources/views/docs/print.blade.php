@@ -68,10 +68,11 @@
 <body>
 
 <div class="print">
-    <span class="title">{{ $stamp ? $stamp->company_name : 'ООО "Трансавто-7"' }}</span><br>
+    @php /** @var $stamp \App\Services\TripTicketExporter\ViewModels\StampViewModel */@endphp
+    <span class="title">{{ $stamp->getReqName() }}</span><br>
     <span class="licence">
-            {{ $stamp ? $stamp->licence : 'Бессрочная лицензия от 09.12.2020 № Л041-1177-91/00366739' }}
-        </span><br>
+            {{ $stamp->getLicense() }}
+    </span><br>
     <span class="name">{{ $form->driver->fio }}</span><br>
     прошел {{ $form->details->type_view }}<br>
     Медицинский осмотр<br>

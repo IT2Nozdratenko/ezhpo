@@ -749,19 +749,24 @@
                 }
             })
 
-            $('input[name="phone"]').on('keypress', function(event) {
-                if (event.which < 48 || event.which > 57) {
-                    event.preventDefault()
-                }
-            });
+            $(document).ready(function() {
+                $('#elements-modal-add input[name="phone"]').on('input', function() {
+                    validatePhone(this)
+                })
 
-            $('input[name="phone"]').on('input', function() {
-                this.value = this.value.replace(/\D/g, '')
+                $('#modalEditor').on('input', 'input[name="phone"]', function() {
+                    validatePhone(this)
+                })
 
-                if (this.value.length > 5) {
-                    this.value = this.value.slice(0, 11)
+                function validatePhone(input) {
+                    input.value = input.value.replace(/[^+\-\d\s]/g, '')
+
+                    if (input.value.length > 5) {
+                        input.value = input.value.slice(0, 18)
+                    }
                 }
-            });
+            })
+
         </script>
     @endsection
 @endsection

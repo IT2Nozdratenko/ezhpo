@@ -4,6 +4,7 @@ namespace App\Models\Forms;
 
 use App\Enums\FlagPakEnum;
 use App\Enums\FormTypeEnum;
+use App\Point;
 use App\Stamp;
 use App\User;
 use App\ValueObjects\NotAdmittedReasons;
@@ -142,8 +143,9 @@ class MedicForm extends Model
         if ($this->getAttribute('flag_pak') !== FlagPakEnum::INTERNAL) {
             $terminal = $this->terminal;
 
+            /** @var User $terminal */
             if ($terminal) {
-                $terminalStamp = $terminal->stamp;
+                $terminalStamp = $terminal->getStamp();
 
                 if ($terminalStamp) {
                     return $terminalStamp;
@@ -151,14 +153,10 @@ class MedicForm extends Model
             }
         }
 
-        $pointStamp = $this->form->point->stamp;
-        if ($pointStamp) {
-            return $pointStamp;
-        }
-
-        $townStamp = $this->form->point->town->stamp;
-        if ($townStamp) {
-            return $townStamp;
+        /** @var Point|null $point */
+        $point = $this->form->point;
+        if ($point) {
+            return $point->getStamp();
         }
 
         return null;

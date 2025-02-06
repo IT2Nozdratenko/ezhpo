@@ -69,4 +69,21 @@ class Point extends Model
     {
         return $this->belongsTo(Stamp::class);
     }
+
+    public function getStamp(): ?Stamp
+    {
+        /** @var Stamp $stamp */
+        $stamp = $this->stamp;
+        if ($stamp) {
+            return $stamp;
+        }
+
+        /** @var Town|null $town */
+        $town = $this->town;
+        if ($town) {
+            return $town->getStamp();
+        }
+
+        return null;
+    }
 }

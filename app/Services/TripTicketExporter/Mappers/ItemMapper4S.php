@@ -4,6 +4,7 @@ namespace App\Services\TripTicketExporter\Mappers;
 
 use App\Enums\LogisticsMethodEnum;
 use App\Enums\TransportationTypeEnum;
+use App\Models\Forms\MedicForm;
 use App\Models\Forms\TechForm;
 use App\Models\TripTicket;
 use App\Req;
@@ -68,7 +69,15 @@ final class ItemMapper4S implements ItemMapperInterface
             $reqName = $req->name;
         }
 
-        return new CompanyViewModel($tripTicket->company->name, $tripTicket->company->where_call, $reqName);
+        $company = $tripTicket->company;
+
+        return new CompanyViewModel(
+            $company->name,
+            $company->where_call,
+            $reqName,
+            $company->address,
+            $company->ogrn
+        );
     }
 
     private function mapDriver(TripTicket $tripTicket): ?DriverViewModel
@@ -113,12 +122,14 @@ final class ItemMapper4S implements ItemMapperInterface
 
         $form = $tripTicket->medicForm;
 
-        $stamp = $form->details->getStamp();
+        /** @var MedicForm $details */
+        $details = $form->details;
+        $stamp = $details->getStamp();
 
         return new MedicFormViewModel(
             $form->date ? Carbon::parse($form->date) : null,
             $form->user ? $form->user->name : null,
-            $stamp ? new StampViewModel($stamp->company_name, $stamp->licence) : null
+            $stamp ? StampViewModel::fromStampOrDefault($stamp) : null
         );
     }
 

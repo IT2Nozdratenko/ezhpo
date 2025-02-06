@@ -171,7 +171,9 @@ class HomeController extends Controller
             'town_id' => 'points.pv_id',
             'pv_id' => 'forms.point_id',
             'user_id' => 'forms.user_id',
-            'car_mark_model' => 'cars.mark_model'
+            'car_mark_model' => 'cars.mark_model',
+            'driver_id' => 'forms.driver_id',
+            'car_id' => 'tech_forms.car_id'
         ];
 
         if (count($filterParams) > 0 && $filterActivated) {
@@ -400,18 +402,22 @@ class HomeController extends Controller
          */
         if ($validTypeForm === FormTypeEnum::TECH) {
             $forms = $forms
+                ->leftJoin('trip_tickets', 'forms.id', '=', 'trip_tickets.tech_form_id')
                 ->leftJoin('cars', 'tech_forms.car_id', '=', 'cars.hash_id')
                 ->select(array_merge($defaultFieldsToSelect, [
                     DB::raw("COALESCE(cars.type_auto, tech_forms.car_type_auto) as car_type_auto"),
                     'cars.mark_model as car_mark_model',
                     'cars.gos_number as car_gos_number',
                     'cars.date_prto as date_prto',
+                    'trip_tickets.id as trip_tickets_id'
                 ]));
-        } else if (($validTypeForm === FormTypeEnum::MEDIC) && $export) {
+        } else if (($validTypeForm === FormTypeEnum::MEDIC) && ($export || $user->hasRole('client'))) {
             $forms = $forms
                 ->leftJoin('medic_form_normalized_pressures', 'forms.id', '=', 'medic_form_normalized_pressures.form_id')
+                ->leftJoin('trip_tickets', 'forms.id', '=', 'trip_tickets.medic_form_id')
                 ->select(array_merge($defaultFieldsToSelect, [
                     'drivers.date_prmo as date_prmo',
+                    'trip_tickets.id as trip_tickets_id',
                     DB::raw("COALESCE(medic_form_normalized_pressures.pressure, medic_forms.tonometer, NULL) as tonometer")
                 ]));
         } else if ($validTypeForm === FormTypeEnum::MEDIC) {

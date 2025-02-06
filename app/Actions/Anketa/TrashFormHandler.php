@@ -7,13 +7,17 @@ use App\Enums\FormLogActionTypesEnum;
 use App\Enums\FormTypeEnum;
 use App\Events\Forms\FormAction;
 use App\Models\Forms\Form;
+use App\Models\TripTicket;
 use App\User;
 use Illuminate\Support\Carbon;
+use LogicException;
 
 final class TrashFormHandler
 {
     public function handle(Form $form, $action, User $user)
     {
+        $this->checkThatNotBlockedToTrash($form);
+
         $form->deleted_id = $user->id;
 
         if (!$action) {
@@ -33,6 +37,21 @@ final class TrashFormHandler
         event(new FormAction($user, $form, $eventType));
 
         $form->save();
+    }
+
+    /**
+     * @throws LogicException
+     */
+    protected function checkThatNotBlockedToTrash(Form $form)
+    {
+        $attachedToTripTicket = TripTicket::query()
+            ->where('medic_form_id', $form->id)
+            ->orWhere('tech_form_id', $form->id)
+            ->exists();
+
+        if ($attachedToTripTicket) {
+            throw new LogicException('Осмотр не может быть удален, т.к. связан с ПЛ');
+        }
     }
 
     protected function disableBanIfNeed(Form $form)

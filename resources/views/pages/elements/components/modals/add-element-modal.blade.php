@@ -72,27 +72,6 @@
         @continue
     @endif
 
-    @if($k === 'phone' && $model === 'Driver')
-        <div class="form-group" data-field="{{ $k }}">
-            <label>
-                {{ $v['label'] }}
-            </label>
-
-            <input
-                type="{{ $v['type'] }}" {{ $is_required }}
-                name="{{ $k }}"
-                data-label="{{ $v['label'] ?? $k }}"
-                placeholder="{{ $v['label'] }}"
-                data-field="{{ $model }}_{{ $k }}"
-                class="form-control {{ $v['classes'] ?? '' }}"
-                step="1"
-                min="0"
-                max="99999999999"
-            />
-        </div>
-        @continue
-    @endif
-
     @if($k !== 'id' && !isset($v['hidden']))
         @if($model === 'Instr' && $k === 'sort')
             <div class="form-group" data-field="{{ $k }}">

@@ -158,6 +158,32 @@
                 await saveFieldsVisible(null);
                 $('.toast-reset-checks').toast('show');
             });
+
+            $('.delete').on('click', function (e) {
+                e.preventDefault();
+                const link = $(this).attr('href');
+
+                const action = $(this).data('action');
+
+                if (action === 0) {
+                    window.location.href = link;
+
+                    return;
+                }
+
+                swal.fire({
+                    title: 'Подтверждение',
+                    text: 'Вы уверены, что хотите удалить ПЛ? Связь с МО и ТО будет удалена!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Да',
+                    cancelButtonText: 'Нет'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = link;
+                    }
+                });
+            });
         });
 
         function saveFieldsVisible(params) {

@@ -948,17 +948,8 @@
                                         </a>
                                     @endif
 
-                                    @if($type_ankets !== FormTypeEnum::PAK_QUEUE && $permissionToDelete)
-                                        <a
-                                            href="{{ route('forms.trash', ['id' => $anketa->id, 'action' => request()->get('trash') ? 0 : 1]) }}"
-                                            class="btn btn-warning btn-sm hv-btn-trash mr-1"
-                                            data-id="{{ $anketa->id }}">
-                                            @if(request()->get('trash', 0))
-                                                <i class="fa fa-undo"></i>
-                                            @else
-                                                <i class="fa fa-trash"></i>
-                                            @endisset
-                                        </a>
+                                    @if(($type_ankets !== FormTypeEnum::PAK_QUEUE) && $permissionToDelete)
+                                        @include('pages.home.components.buttons.delete-form-btn', compact('anketa'))
                                     @endif
                                 </td>
                             </tr>

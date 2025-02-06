@@ -52,7 +52,7 @@ class CreateDriverHandler extends AbstractCreateElementHandler implements Create
                 .'не попадает в промежуток с '.Carbon::now()->subYears(80)->format('d.m.Y').' по '.Carbon::now()->subYears(16)->format('d.m.Y'));
         }
 
-        if ($data['phone'] !== null && (! is_numeric($data['phone']) || $data['phone'] < 0 || $data['phone'] > 99999999999)) {
+        if ($data['phone'] !== null && preg_match("/^[+\-\d\s]+$/", $data['phone']) !== 1) {
             throw new Exception('Ошибка! Неправильный формат телефона: '.$data['phone']);
         }
 

@@ -22,6 +22,7 @@ use App\Models\Forms\MedicForm;
 use App\SdpoCrashLog;
 use App\Services\FormHash\FormHashGenerator;
 use App\Services\FormHash\MedicHashData;
+use App\Services\TripTicketExporter\ViewModels\StampViewModel;
 use App\Settings;
 use App\Stamp;
 use App\Traits\UserEdsTrait;
@@ -62,6 +63,10 @@ class SdpoController extends Controller
             return response()->json(['message' => 'Водитель с указанным ID не найден!'], 400);
         }
 
+        $defaultStamp = StampViewModel::default();
+        $defaultCompanyName = $defaultStamp->getReqName();
+        $defaultLicense = $defaultStamp->getLicense();
+
         $forms = Form::query()
             ->select([
                 'forms.id',
@@ -73,19 +78,22 @@ class SdpoController extends Controller
                 'medic_forms.type_view',
                 'forms.user_validity_eds_start',
                 'forms.user_validity_eds_end',
-                'companies.name as stamp_head',
-                'stamps.licence as stamp_licence'
+                DB::raw("COALESCE(terminal_stamps.company_name, point_stamps.company_name, town_stamps.company_name, '$defaultCompanyName') as stamp_head"),
+                DB::raw("COALESCE(terminal_stamps.licence, point_stamps.licence, town_stamps.licence, '$defaultLicense') as stamp_licence")
             ])
             ->join('medic_forms', 'forms.uuid', '=', 'medic_forms.forms_uuid')
             ->join('drivers', 'forms.driver_id', '=', 'drivers.hash_id')
             ->join('companies', 'forms.company_id', '=', 'companies.hash_id')
             ->join('users as terminals', 'medic_forms.terminal_id', '=', 'terminals.id')
             ->join('users', 'forms.user_id', '=', 'users.id')
-            ->leftJoin('stamps', 'terminals.stamp_id', '=', 'terminals.id')
+            ->leftJoin('stamps as terminal_stamps', 'terminals.stamp_id', '=', 'terminal_stamps.id')
+            ->leftJoin('points', 'forms.point_id', '=', 'points.id')
+            ->leftJoin('stamps as point_stamps', 'points.stamp_id', '=', 'point_stamps.id')
+            ->leftJoin('towns', 'points.pv_id', '=', 'towns.id')
+            ->leftJoin('stamps as town_stamps', 'towns.stamp_id', '=', 'town_stamps.id')
             ->where('forms.driver_id', $id)
-            ->where('forms.type_anketa', FormTypeEnum::MEDIC)
             ->where('medic_forms.admitted', 'Допущен')
-            ->whereNotNull('medic_forms.flag_pak')
+            ->where('medic_forms.flag_pak', '!=', FlagPakEnum::INTERNAL)
             ->whereDate('forms.date', '<=', Carbon::now()->toDateTime())
             ->whereDate('forms.date', '>=', Carbon::now()->startOfMonth()->subMonth()->toDateString())
             ->get()
@@ -319,11 +327,8 @@ class SdpoController extends Controller
 
             $form['timeout'] = Settings::setting('timeout') ?? 20;
 
-            $stamp = $apiClient->stamp;
-            if ($stamp) {
-                $form['stamp_head'] = $stamp->company_name;
-                $form['stamp_licence'] = $stamp->licence;
-            }
+            $stampViewModel = StampViewModel::fromStampOrDefault($formDetailsModel->getStamp());
+            $form = array_merge($form, $stampViewModel->toArray());
 
             $validity = UserEdsTrait::getValidityString($user->validity_eds_start, $user->validity_eds_end);
             if ($validity) {
@@ -394,21 +399,9 @@ class SdpoController extends Controller
         /** @var User $user */
         $user = $request->user('api');
 
-        $stamp = $user->stamp;
+        $stampViewModel = StampViewModel::fromStampOrDefault($user->getStamp());
 
-        $data = [
-            'stamp_head' => null,
-            'stamp_licence' => null
-        ];
-
-        if ($user->stamp) {
-            $data = [
-                'stamp_head' => $stamp->company_name,
-                'stamp_licence' => $stamp->licence
-            ];
-        }
-
-        return response()->json($data);
+        return response()->json($stampViewModel->toArray());
     }
 
     public function getTerminalVerification(Request $request)
@@ -625,15 +618,18 @@ class SdpoController extends Controller
     public function getInspection($id): JsonResponse
     {
         $inspection = Form::find($id);
+        if (!$inspection) {
+            return response()->json(['Осмотр с указанным ID не найден'], Response::HTTP_NOT_FOUND);
+        }
+
+        /** @var MedicForm $details */
         $details = $inspection->details;
 
         $data = $inspection->toArray() + $details->toArray();
+        unset($data['details']);
 
-        $stamp = optional(optional($details->terminal))->stamp;
-        if ($stamp) {
-            $data['stamp_head'] = $stamp->company_name;
-            $data['stamp_licence'] = $stamp->licence;
-        }
+        $stampViewModel = StampViewModel::fromStampOrDefault($details->getStamp());
+        $data = array_merge($data, $stampViewModel->toArray());
 
         $validity = UserEdsTrait::getValidityString(
             $inspection['user_validity_eds_start'] ?? null,
