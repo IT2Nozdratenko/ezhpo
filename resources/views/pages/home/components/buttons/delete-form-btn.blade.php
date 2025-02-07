@@ -4,7 +4,7 @@
     $trash = request()->get('trash', 0) ?? 1;
     $icon = $trash ? "fa-undo" : "fa-trash";
     $color = $disabled ? "btn-secondary" : "btn-warning";
-    $route = $disabled ? '#' : route('forms.trash', ['id' => $anketa->id, 'action' => $trash]);
+    $route = $disabled ? '#' : route('forms.trash', ['id' => $anketa->id, 'action' => !$trash]);
 @endphp
 
 <a
