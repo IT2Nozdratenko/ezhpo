@@ -412,12 +412,14 @@ class SdpoController extends Controller
             return response()->json([
                 'serial_number' => null,
                 'date_check' => null,
+                'stamp' => null,
             ]);
         }
 
         return response()->json([
             'serial_number' => $user->terminalCheck->serial_number,
             'date_check' => $user->terminalCheck->date_check->format('Y-m-d'),
+            'stamp' => StampViewModel::fromStampOrDefault($user->getStamp())->toArray(),
         ]);
     }
 
