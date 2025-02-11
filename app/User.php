@@ -4,7 +4,6 @@ namespace App;
 
 use App\Enums\FormTypeEnum;
 use App\Models\Forms\Form;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Request;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -66,31 +64,6 @@ class User extends Authenticatable
             '1' => FormTypeEnum::TECH,
             '4' => FormTypeEnum::PAK_QUEUE
         ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        if (static::hideDefaultUser()) {
-            static::addGlobalScope('hideDefaultUser', function (Builder $builder) {
-                $builder->where('login', '!=', self::DEFAULT_USER_LOGIN);
-            });
-        }
-    }
-
-    //TODO: перенести в корректный слой позже
-    protected static function hideDefaultUser(): bool
-    {
-        $user = Request::user('web');
-
-        if (!$user) {
-            $user = Request::user('api');
-        }
-
-        if (!$user) return false;
-
-        return $user->login !== self::DEFAULT_USER_LOGIN;
-    }
 
     public function deleted_user(): BelongsTo
     {
