@@ -4,7 +4,7 @@ namespace App\Services\TripTicketExporter\ViewModels;
 
 use App\Stamp;
 
-class StampViewModel
+final class StampViewModel
 {
     /**
      * @var string

@@ -2,7 +2,7 @@
 
 return [
     'print' => [
-        'template' => public_path('templates/trip-tickets/print.xlsx'),
+        'template' => storage_path('app/templates/trip-tickets/print.xlsx'),
         '4s' => [
             'template' => [
                 'front' => [

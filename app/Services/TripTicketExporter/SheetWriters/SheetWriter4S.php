@@ -2,6 +2,8 @@
 
 namespace App\Services\TripTicketExporter\SheetWriters;
 
+use App\Enums\LogisticsMethodEnum;
+use App\Enums\TransportationTypeEnum;
 use App\Services\TripTicketExporter\ViewModels\ExportedItem;
 use App\Services\TripTicketExporter\ViewModels\ExportedItem4S;
 use App\Services\TripTicketExporter\ViewModels\MedicFormViewModel;
@@ -49,9 +51,11 @@ final class SheetWriter4S implements SheetWriterInterface
             ->fillOdometer()
             ->fillEmployees()
             ->fillMedicStamp()
-            ->fillTechStamp();
+            ->fillTechStamp()
+            ->fillLogisticMethod()
+            ->fillTransportationType();
 
-        $title = $number.'. '.config('trip-ticket.print.4s.template.front.prefix');
+        $title = $number . '. ' . config('trip-ticket.print.4s.template.front.prefix');
 
         if ($item->getTripTicket()->getTicketNumber()) {
             $title .= ' (' . $item->getTripTicket()->getTicketNumber() . ')';
@@ -247,6 +251,22 @@ final class SheetWriter4S implements SheetWriterInterface
         $date = $this->getDateString($techForm);
 
         $this->sheet->setCellValue('BY44', $techStamp . "\n\n" . $date);
+
+        return $this;
+    }
+
+    private function fillLogisticMethod(): self
+    {
+        $value = LogisticsMethodEnum::getLabel($this->data->getTripTicket()->getLogisticsMethod()->value());
+        $this->sheet->setCellValue('B22', $value);
+
+        return $this;
+    }
+
+    private function fillTransportationType(): self
+    {
+        $value = TransportationTypeEnum::getLabel($this->data->getTripTicket()->getTransportationType()->value());
+        $this->sheet->setCellValue('V22', $value);
 
         return $this;
     }
