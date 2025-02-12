@@ -173,7 +173,8 @@ class HomeController extends Controller
             'user_id' => 'forms.user_id',
             'car_mark_model' => 'cars.mark_model',
             'driver_id' => 'forms.driver_id',
-            'car_id' => 'tech_forms.car_id'
+            'car_id' => 'tech_forms.car_id',
+            'period_pl' => "$formDetailsTable.period_pl"
         ];
 
         if (count($filterParams) > 0 && $filterActivated) {
