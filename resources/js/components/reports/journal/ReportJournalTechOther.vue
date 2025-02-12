@@ -16,10 +16,10 @@
                     <td v-for="(item, name, index) in data" colspan="7" class="p-0">
                         <table class="w-100 table mr-2">
                             <thead>
-                            <th class="text-center">Автомобиль</th>
-                            <th class="text-center">Предрейсовый/Предсменный</th>
-                            <th class="text-center">Послерейсовый/Послесменный</th>
-                            <th class="text-center">Несогласованные осмотры</th>
+                                <th class="text-center">Автомобиль</th>
+                                <th class="text-center">Предрейсовый/Предсменный</th>
+                                <th class="text-center">Послерейсовый/Послесменный</th>
+                                <th class="text-center">Несогласованные осмотры</th>
                             </thead>
 
                             <tbody>

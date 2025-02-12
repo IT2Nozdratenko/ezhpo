@@ -154,7 +154,8 @@ class GetJournalDataHandler implements GetServicesReportForCompanyByPeriodInterf
                 'tech_forms.car_id',
                 'tech_forms.is_dop',
                 'tech_forms.result_dop',
-                'tech_forms.type_view'
+                'tech_forms.type_view',
+                'tech_forms.car_type_auto as form_type_auto',
             ])
             ->where('type_anketa', FormTypeEnum::TECH)
             ->leftJoin('points', 'points.id', '=', 'forms.point_id')
@@ -171,8 +172,8 @@ class GetJournalDataHandler implements GetServicesReportForCompanyByPeriodInterf
                 })->orWhere(function ($subQuery) use ($dateFrom, $dateTo) {
                     $subQuery->whereNull('forms.date')
                         ->whereBetween('tech_forms.period_pl', [
-                        $dateFrom->format('Y-m'),
-                        $dateTo->format('Y-m'),
+                            $dateFrom->format('Y-m'),
+                            $dateTo->format('Y-m'),
                     ]);
                 });
             })
@@ -183,19 +184,47 @@ class GetJournalDataHandler implements GetServicesReportForCompanyByPeriodInterf
         foreach ($techs->groupBy('car_id') as $carForms) {
             $car = $carForms->first();
             $carId = $car->car_id;
-            $result[$carId]['car_gos_number'] = $car->car_gos_number;
-            $result[$carId]['type_auto'] = $car->type_auto;
-            $result[$carId]['pv_id'] = implode('; ', array_unique($carForms->pluck('pv_id')->toArray()));
 
-            foreach ($carForms->groupBy(['type_view']) as $carFormsGroupedByType) {
-                $formTypeView = $carFormsGroupedByType->first()->type_view;
-                $result[$carId]['types'][$formTypeView]['total'] = $carFormsGroupedByType->count();
+            if ($carId) {
+                $result[$carId]['car_gos_number'] = $car->car_gos_number;
+                $result[$carId]['type_auto'] = $car->type_auto;
+                $result[$carId]['pv_id'] = implode('; ', array_unique($carForms->pluck('pv_id')->toArray()));
+
+                foreach ($carForms->groupBy(['type_view']) as $carFormsGroupedByType) {
+                    $formTypeView = $carFormsGroupedByType->first()->type_view;
+                    $result[$carId]['types'][$formTypeView]['total'] = $carFormsGroupedByType->count();
+                }
+
+                $result[$carId]['types']['is_dop']['total'] = $carForms
+                    ->where('result_dop', null)
+                    ->where('is_dop', 1)
+                    ->count();
+            } else {
+                $result['empty_id']['car_gos_number'] = null;
+
+                foreach ($carForms->groupBy(['form_type_auto']) as $formCarTypeGroups) {
+                    $carType = $formCarTypeGroups->first()->form_type_auto;
+                    if (! isset($result['empty_id']['type_auto'][$carType])) {
+                        $result['empty_id']['type_auto'][$carType] = [];
+                    }
+                    $result['empty_id']['type_auto'][$carType]['pv_id'] = implode('; ', array_unique($carForms->pluck('pv_id')->toArray()));
+
+                    foreach ($formCarTypeGroups->groupBy(['type_view']) as $carFormsGroupedByType) {
+                        $formTypeView = $carFormsGroupedByType->first()->type_view;
+
+                        if (! isset($result['empty_id']['type_auto'][$carType]['types'][$formTypeView])) {
+                            $result['empty_id']['type_auto'][$carType]['types'][$formTypeView] = [];
+                        }
+
+                        $result['empty_id']['type_auto'][$carType]['types'][$formTypeView]['total'] = $carFormsGroupedByType->count();
+                    }
+
+                    $result['empty_id']['type_auto'][$carType]['types']['is_dop']['total'] = $formCarTypeGroups
+                        ->where('result_dop', null)
+                        ->where('is_dop', 1)
+                        ->count();
+                }
             }
-
-            $result[$carId]['types']['is_dop']['total'] = $carForms
-                ->where('result_dop', null)
-                ->where('is_dop', 1)
-                ->count();
         }
 
         return $result;
@@ -330,7 +359,8 @@ class GetJournalDataHandler implements GetServicesReportForCompanyByPeriodInterf
                 'tech_forms.car_id',
                 'tech_forms.is_dop',
                 'tech_forms.result_dop',
-                'tech_forms.type_view'
+                'tech_forms.type_view',
+                'tech_forms.car_type_auto as form_type_auto',
             ])
             ->where('type_anketa', FormTypeEnum::TECH)
             ->leftJoin('points', 'points.id', '=', 'forms.point_id')
@@ -371,34 +401,65 @@ class GetJournalDataHandler implements GetServicesReportForCompanyByPeriodInterf
 
             $carId = $form->car_id;
 
-            if (!isset($result[$key]['reports'][$carId])) {
-                $points = implode('; ', array_unique($forms->where('car_id', $carId)->pluck('pv_id')->toArray()));
-                $result[$key]['reports'][$carId] = [
-                    'car_gos_number' => $form->car_gos_number,
-                    'type_auto' => $form->type_auto,
-                    'pv_id' => $points,
-                    'types' => [
-                        'is_dop' => [
-                            'total' => 0
+            if ($carId) {
+                if (! isset($result[$key]['reports'][$carId])) {
+                    $points = implode('; ', array_unique($forms->where('car_id', $carId)->pluck('pv_id')->toArray()));
+                    $result[$key]['reports'][$carId] = [
+                        'car_gos_number' => $form->car_gos_number,
+                        'type_auto' => $form->type_auto,
+                        'pv_id' => $points,
+                        'types' => [
+                            'is_dop' => [
+                                'total' => 0
+                            ]
                         ]
-                    ]
-                ];
-            }
+                    ];
+                }
 
-            $result[$key]['year'] = $date->year;
-            $result[$key]['month'] = $date->month;
-            $typeView = $form->type_view;
+                $result[$key]['year'] = $date->year;
+                $result[$key]['month'] = $date->month;
+                $typeView = $form->type_view;
 
-            if (!isset($result[$key]['reports'][$carId]['types'][$typeView])) {
-                $result[$key]['reports'][$carId]['types'][$typeView] = [
-                    'total' => 0
-                ];
-            }
+                if (!isset($result[$key]['reports'][$carId]['types'][$typeView])) {
+                    $result[$key]['reports'][$carId]['types'][$typeView] = [
+                        'total' => 0
+                    ];
+                }
 
-            $result[$key]['reports'][$carId]['types'][$form->type_view]['total'] += 1;
+                $result[$key]['reports'][$carId]['types'][$form->type_view]['total'] += 1;
 
-            if ($form->is_dop && $form->result_dop == null) {
-                $result[$key]['reports'][$carId]['types']['is_dop']['total'] += 1;
+                if ($form->is_dop && $form->result_dop == null) {
+                    $result[$key]['reports'][$carId]['types']['is_dop']['total'] += 1;
+                }
+            } else {
+                $carType = $form->form_type_auto;
+                if (! isset($result[$key]['reports']['empty_id']['type_auto'][$carType])) {
+                    $points = implode('; ', array_unique($forms->where('car_id', $carId)->pluck('pv_id')->toArray()));
+                    $result[$key]['reports']['empty_id']['type_auto'][$carType] = [
+                        'pv_id' => $points,
+                        'types' => [
+                            'is_dop' => [
+                                'total' => 0
+                            ]
+                        ]
+                    ];
+                }
+
+                $result[$key]['year'] = $date->year;
+                $result[$key]['month'] = $date->month;
+                $typeView = $form->type_view;
+
+                if (!isset($result[$key]['reports']['empty_id']['type_auto'][$carType]['types'][$typeView])) {
+                    $result[$key]['reports']['empty_id']['type_auto'][$carType]['types'][$typeView] = [
+                        'total' => 0
+                    ];
+                }
+
+                $result[$key]['reports']['empty_id']['type_auto'][$carType]['types'][$typeView]['total'] += 1;
+
+                if ($form->is_dop && $form->result_dop == null) {
+                    $result[$key]['reports']['empty_id']['type_auto'][$carType]['types']['is_dop']['total'] += 1;
+                }
             }
         }
 

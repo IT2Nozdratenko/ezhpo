@@ -14,53 +14,101 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(item, name, index) in reports" :key="index">
-                        <td width="100">
-                            {{ name }}
-                        </td>
+                    <template v-for="(item, name, index) in reports">
+                        <tr v-if="name !== 'empty_id'" :key="index">
+                            <td width="100">
+                                {{ name }}
+                            </td>
 
-                        <td width="250">
-                            <b>{{ getStringMark(item) }}</b>
-                            <p>{{ item.pv_id || '' }}</p>
-                        </td>
+                            <td width="250">
+                                <b>{{ getStringMark(item) }}</b>
+                                <p>{{ item.pv_id || '' }}</p>
+                            </td>
 
-                        <td class="text-center" width="150">
-                            {{ getTotal(item, 'Предрейсовый', 'Предсменный') }}
+                            <td class="text-center" width="150">
+                                {{ getTotal(item, 'Предрейсовый', 'Предсменный') }}
 
-                            <div class="text-red font-weight-bold" v-if="getSum(item, 'Предрейсовый', 'Предсменный') == null">
-                                Услуги не указаны
-                            </div>
-                            <div class="font-weight-bold" v-else>
-                                {{ getSum(item, 'Предрейсовый', 'Предсменный') }}₽
-                                <span class="text-red" v-if="getDiscount(item, 'Предрейсовый', 'Предсменный')">
+                                <div class="text-red font-weight-bold" v-if="getSum(item, 'Предрейсовый', 'Предсменный') == null">
+                                    Услуги не указаны
+                                </div>
+                                <div class="font-weight-bold" v-else>
+                                    {{ getSum(item, 'Предрейсовый', 'Предсменный') }}₽
+                                    <span class="text-red" v-if="getDiscount(item, 'Предрейсовый', 'Предсменный')">
                                     ({{ getDiscount(item, 'Предрейсовый', 'Предсменный') }}%)
                                 </span>
-                                <i v-if="isSync(item, 'Предрейсовый', 'Предсменный')" class="fa fa-refresh text-success"></i>
-                                <i v-else class="fa fa-refresh text-red"></i>
-                            </div>
-                        </td>
+                                    <i v-if="isSync(item, 'Предрейсовый', 'Предсменный')" class="fa fa-refresh text-success"></i>
+                                    <i v-else class="fa fa-refresh text-red"></i>
+                                </div>
+                            </td>
 
-                        <td class="text-center" width="150">
-                            {{ getTotal(item, 'Послерейсовый', 'Послесменный') }}
+                            <td class="text-center" width="150">
+                                {{ getTotal(item, 'Послерейсовый', 'Послесменный') }}
 
-                            <div class="text-red font-weight-bold" v-if="getSum(item, 'Послерейсовый', 'Послесменный') == null">
-                                Услуги не указаны
-                            </div>
-                            <div class="font-weight-bold" v-else>
-                                {{ getSum(item, 'Послерейсовый', 'Послесменный') }}₽
-                                <span class="text-red" v-if="getDiscount(item, 'Послерейсовый', 'Послесменный')">
+                                <div class="text-red font-weight-bold" v-if="getSum(item, 'Послерейсовый', 'Послесменный') == null">
+                                    Услуги не указаны
+                                </div>
+                                <div class="font-weight-bold" v-else>
+                                    {{ getSum(item, 'Послерейсовый', 'Послесменный') }}₽
+                                    <span class="text-red" v-if="getDiscount(item, 'Послерейсовый', 'Послесменный')">
                                     ({{ getDiscount(item, 'Послерейсовый', 'Послесменный') }}%)
                                 </span>
-                                <i v-if="isSync(item, 'Послерейсовый', 'Послесменный')" class="fa fa-refresh text-success"></i>
-                                <i v-else class="fa fa-refresh text-red"></i>
-                            </div>
+                                    <i v-if="isSync(item, 'Послерейсовый', 'Послесменный')" class="fa fa-refresh text-success"></i>
+                                    <i v-else class="fa fa-refresh text-red"></i>
+                                </div>
 
-                        </td>
+                            </td>
 
-                        <td class="text-center" width="150">
-                            {{ getTotal(item, 'is_dop') }}
-                        </td>
-                    </tr>
+                            <td class="text-center" width="150">
+                                {{ getTotal(item, 'is_dop') }}
+                            </td>
+                        </tr>
+
+                        <tr v-else v-for="(subItem, car_type, subIndex) in item.type_auto" :key="index + '-' + subIndex">
+                            <td width="100"></td>
+
+                            <td width="250">
+                                <b>{{ getStringMark(subItem) + ' (' + car_type + ')' }}</b>
+                                <p>{{ subItem.pv_id || '' }}</p>
+                            </td>
+
+                            <td class="text-center" width="150">
+                                {{ getTotal(subItem, 'Предрейсовый', 'Предсменный') }}
+
+                                <div class="text-red font-weight-bold" v-if="getSum(subItem, 'Предрейсовый', 'Предсменный') == null">
+                                    Услуги не указаны
+                                </div>
+                                <div class="font-weight-bold" v-else>
+                                    {{ getSum(subItem, 'Предрейсовый', 'Предсменный') }}₽
+                                    <span class="text-red" v-if="getDiscount(subItem, 'Предрейсовый', 'Предсменный')">
+                                    ({{ getDiscount(subItem, 'Предрейсовый', 'Предсменный') }}%)
+                                </span>
+                                    <i v-if="isSync(subItem, 'Предрейсовый', 'Предсменный')" class="fa fa-refresh text-success"></i>
+                                    <i v-else class="fa fa-refresh text-red"></i>
+                                </div>
+                            </td>
+
+                            <td class="text-center" width="150">
+                                {{ getTotal(subItem, 'Послерейсовый', 'Послесменный') }}
+
+                                <div class="text-red font-weight-bold" v-if="getSum(subItem, 'Послерейсовый', 'Послесменный') == null">
+                                    Услуги не указаны
+                                </div>
+                                <div class="font-weight-bold" v-else>
+                                    {{ getSum(subItem, 'Послерейсовый', 'Послесменный') }}₽
+                                    <span class="text-red" v-if="getDiscount(subItem, 'Послерейсовый', 'Послесменный')">
+                                    ({{ getDiscount(subItem, 'Послерейсовый', 'Послесменный') }}%)
+                                </span>
+                                    <i v-if="isSync(subItem, 'Послерейсовый', 'Послесменный')" class="fa fa-refresh text-success"></i>
+                                    <i v-else class="fa fa-refresh text-red"></i>
+                                </div>
+
+                            </td>
+
+                            <td class="text-center" width="150">
+                                {{ getTotal(subItem, 'is_dop') }}
+                            </td>
+                        </tr>
+                    </template>
 
                     <tr v-if="reports">
                         <td width="100">
@@ -68,7 +116,7 @@
                         </td>
 
                         <td>
-                            {{ Object.keys(reports).length }}
+                            {{ Object.keys(reports).length + (reports.empty_id ? Object.keys(reports.empty_id.type_auto).length - 1 : 0) }}
                         </td>
 
                         <td class="text-center" width="150">
@@ -81,7 +129,6 @@
 
                         <td class="text-center" width="150">
                             {{ getTotalAll(reports, 'Послерейсовый', 'Послесменный') }}
-
 
                             <div class="font-weight-bold" v-if="getSumAll(reports, 'Послерейсовый', 'Послесменный') != null">
                                 {{ getSumAll(reports, 'Послерейсовый', 'Послесменный') }}₽
@@ -115,6 +162,9 @@ export default {
         }
     },
     methods: {
+        log(item) {
+            console.log(item)
+        },
         getStringMark(item) {
             let str = '';
             if (item.car_gos_number) {
@@ -124,7 +174,7 @@ export default {
             }
 
             if (item.type_auto) {
-                str +=  `(${item.type_auto})`;
+                str += `(${item.type_auto})`;
             }
 
             return str;

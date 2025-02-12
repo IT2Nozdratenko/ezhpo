@@ -1,10 +1,20 @@
 export function getTotalAll(reports, ...names) {
     let total = 0;
     for (let key in reports) {
-        const totalDriver = getTotal(reports[key], ...names);
+        if (key !== 'empty_id') {
+            const totalDriver = getTotal(reports[key], ...names);
 
-        if (typeof totalDriver === 'number') {
-            total += totalDriver;
+            if (typeof totalDriver === 'number') {
+                total += totalDriver;
+            }
+        } else {
+            for (let type in reports.empty_id.type_auto) {
+                const totalDriver = getTotal(reports.empty_id.type_auto[type], ...names)
+
+                if (typeof totalDriver === 'number') {
+                    total += totalDriver;
+                }
+            }
         }
     }
 
