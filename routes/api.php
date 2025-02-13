@@ -150,6 +150,7 @@ Route::middleware(['auth:api', 'update-last-connection'])->prefix('sdpo')->name(
     Route::get('/stamps', 'Api\SdpoController@getStamps');
     Route::get('/terminal/verification', 'Api\SdpoController@getTerminalVerification');
     Route::get('/medics', 'Api\SdpoController@getMedics');
+    Route::get('/settings', 'Api\SdpoController@getSettings');
 
     Route::post('/crash', 'Api\SdpoController@storeCrash');
     Route::get('wish-message', 'Api\SdpoController@getRandomWish');

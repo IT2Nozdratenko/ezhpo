@@ -178,12 +178,14 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\UnleashServiceProvider::class,
         App\Providers\FormsServiceProvider::class,
+        Src\Terminals\TerminalsProvider::class,
+
+
 
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
         // PERMISSIONS
         Spatie\Permission\PermissionServiceProvider::class,
-
     ],
 
     /*
