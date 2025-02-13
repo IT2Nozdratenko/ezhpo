@@ -114,10 +114,10 @@ final class SheetWriter4S implements SheetWriterInterface
         }
 
         $this->sheet->setCellValue('BF5', trans('date.months_genitive.' . $startDate->month));
-        $this->sheet->setCellValue('CB5', $startDate->year);
+        $this->sheet->setCellValue('CA5', $startDate->year);
 
         $this->sheet->setCellValue('DC5', trans('date.months_genitive.' . $endDate->month));
-        $this->sheet->setCellValue('DX5', $endDate->year);
+        $this->sheet->setCellValue('DW5', $endDate->year);
 
         return $this;
     }
