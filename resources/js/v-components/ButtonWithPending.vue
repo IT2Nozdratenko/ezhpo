@@ -6,16 +6,6 @@ export default {
             type: Boolean,
             required: true,
         },
-        description: {
-            type: String,
-            required: false,
-            default: "Применить"
-        },
-        loadingDescription: {
-            type: String,
-            required: false,
-            default: "Применение..."
-        }
     }
 }
 </script>

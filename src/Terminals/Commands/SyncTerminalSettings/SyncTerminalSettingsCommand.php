@@ -23,7 +23,7 @@ final class SyncTerminalSettingsCommand
         $this->terminalSettings = $terminalSettings;
     }
 
-    public function getTerminalId(): array
+    public function getTerminalIds(): array
     {
         return $this->terminalId;
     }

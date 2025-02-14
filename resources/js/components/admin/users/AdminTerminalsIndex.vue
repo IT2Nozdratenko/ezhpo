@@ -11,6 +11,25 @@
                     <i class="fa fa-plus"></i>
                 </b-button>
 
+                <b-button variant="success"
+                          v-if="current_user_permissions.permission_to_create"
+                          @click="changeSettings"
+                          size="sm"
+                          :disabled="selectedIdsIsEmpty"
+                >
+                    Изменить настройки ({{ selectedIds.length }})
+                    <i class="fa fa-cog"></i>
+                </b-button>
+
+                <b-button variant="success"
+                          v-if="current_user_permissions.permission_to_create"
+                          @click="changeDefaultSettings"
+                          size="sm"
+                >
+                    Изменить настройки по умолчанию
+                    <i class="fa fa-cogs"></i>
+                </b-button>
+
                 <b-button
                     v-if="current_user_permissions.permission_to_trash"
                     variant="warning" size="sm"
@@ -32,13 +51,31 @@
                         ref="users_table"
                         striped hover
                         no-local-sorting
+                        selectable
                         :busy="loading"
                         :sort-by.sync="sortBy"
                         :sort-desc.sync="sortDesc"
                         :current-page="currentPage"
                         :tbody-tr-class="tableRowClass"
                         @sort-changed="sortChanged"
+                        @row-click="checked"
                     >
+                        <template #head(selected)>
+                            <b-form-checkbox
+                                v-model="selectedAll"
+                                @change="toggleAll"
+                            ></b-form-checkbox>
+                        </template>
+
+                        <template #cell(selected)="row">
+                            <b-form-checkbox
+                                v-model="selectedIds"
+                                :value="row.item.id"
+                                @click.stop
+                            >
+                            </b-form-checkbox>
+                        </template>
+
                         <template #cell(name)="row">
                             <template v-if="current_user_permissions.permission_to_edit">
                                 <a href="#" @click="editUserData(row.item)">
@@ -331,6 +368,9 @@ export default {
             companies: [],
             stamps: [],
 
+            selectedAll: false,
+            selectedIds: [],
+
             currentPage: 1,
             totalRows: 0,
             perPage: 100,
@@ -361,7 +401,39 @@ export default {
             logsModalShow: false,
         }
     },
+    computed: {
+        selectedIdsIsEmpty() {
+            return this.selectedIds.length === 0;
+        }
+    },
     methods: {
+        toggleAll() {
+            if (this.selectedAll) {
+                this.selectedIds = this.items.map((row) => row.id);
+                return;
+            }
+            this.selectedIds = [];
+        },
+        checked(item) {
+            const index = this.selectedIds.indexOf(item.id);
+            if (index === -1) {
+                this.selected.push(item.id);
+            } else {
+                this.selected.splice(index, 1);
+            }
+        },
+        changeSettings() {
+            const params = new URLSearchParams({
+                terminal_ids: this.selectedIds,
+            });
+            window.location.href = `/terminals/sync-settings?${params.toString()}`;
+        },
+        changeDefaultSettings() {
+            const params = new URLSearchParams({
+                terminal_ids: [null],
+            });
+            window.location.href = `/terminals/sync-settings?${params.toString()}`;
+        },
         logsRead(modelId) {
             this.logsModalShow = true
             this.$refs.logsModal.loadData(modelId)
@@ -701,6 +773,7 @@ export default {
         });
         this.allPermissions = this.all_permissions;
 
+        this.columns.push({ key: 'selected', label:"", class: 'text-right' });
         this.fields.forEach(field =>{
             this.columns.push({
                 'key': field.field,
@@ -757,6 +830,9 @@ export default {
         currentPage(){
             this.loadData();
         },
+        selectedIds(newSelected) {
+            this.selectedAll = newSelected.length === this.items.length;
+        }
     },
 }
 </script>

@@ -37,15 +37,18 @@ final class SettingsFactory
             "auto_start" => true,
             "delay_before_retry_inspection" => 5000,
             "delay_before_redirect_to_main_page" => 10000,
+            "auto_send_to_crm" => true,
+            "delay_day_in_offline_mod" => 7,
+            "max_inspection_in_offline_mod" => 10,
         ]
     ];
 
-    public static function makeMain(?array $settings): SettingsContainer
+    public static function makeMain(?array $settings = null): SettingsContainer
     {
         return new SettingsContainer(array_merge(self::DEFAULT_SETTINGS['main'], $settings ?? []));
     }
 
-    public static function makeSystem(?array $settings): SettingsContainer
+    public static function makeSystem(?array $settings = null): SettingsContainer
     {
         return new SettingsContainer(array_merge(self::DEFAULT_SETTINGS['system'], $settings ?? []));
     }

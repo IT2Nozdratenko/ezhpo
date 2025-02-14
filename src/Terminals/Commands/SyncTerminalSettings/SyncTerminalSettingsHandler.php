@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Src\Terminals\Commands\SyncTerminalSettings;
 
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
+use Src\Terminals\Eloquent\TerminalSettings;
 
 final class SyncTerminalSettingsHandler
 {
@@ -11,23 +13,24 @@ final class SyncTerminalSettingsHandler
     {
         $settingsJson = json_encode($command->getTerminalSettings()->toArray(), JSON_THROW_ON_ERROR);
 
-        $values = [];
-        $bindings = [];
-
-        foreach ($command->getTerminalId() as $terminalId) {
-            $values[] = "(?, ?)";
-            $bindings[] = $terminalId;
-            $bindings[] = $settingsJson;
+        if (count($command->getTerminalIds()) === 0 ) {
+            TerminalSettings::query()->where('id', '=', Uuid::NIL)->update([
+                'settings' => $settingsJson,
+            ]);
+            return;
         }
 
-        $valuesString = implode(',', $values);
+        foreach ($command->getTerminalIds() as $terminalId) {
+            TerminalSettings::updateOrInsert(
+                ['terminal_id' => $terminalId],
+                [
+                    'id' => Uuid::uuid4()->toString(),
+                    'settings' => $settingsJson,
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
+        }
 
-        $sql = "
-            INSERT INTO terminal_settings (terminal_id, settings)
-            VALUES {$valuesString}
-            ON DUPLICATE KEY UPDATE settings = VALUES(settings)
-        ";
-
-        DB::statement($sql, $bindings);
     }
 }

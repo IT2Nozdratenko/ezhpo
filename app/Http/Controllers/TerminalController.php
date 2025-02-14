@@ -98,8 +98,7 @@ class TerminalController extends Controller
                 ])
                 ->leftJoin('medic_forms', 'forms.uuid', '=', 'medic_forms.forms_uuid')
                 ->whereIn('medic_forms.terminal_id', $terminals->pluck('id'))
-                ->where('forms.created_at', '>=', Carbon::now()->subMonth()->startOfMonth())
-                ->get();
+                ->where('forms.created_at', '>=', Carbon::now()->subMonth()->startOfMonth());
 
             $startOfMonth = Carbon::now()->startOfMonth();
 
