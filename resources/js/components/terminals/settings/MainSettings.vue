@@ -263,7 +263,17 @@ export default {
             </div>
         </div>
 
-        <div class="admin__system-footer g9">
+        <div class="admin__system-card g9">
+            <div class="admin__system-card__title">
+                Контактные данные
+            </div>
+            <div class="admin__system-card__item">
+                <span>Телефон поддержки</span>
+                <input class="large" type="text" v-model="settings.main.support_phone">
+            </div>
+        </div>
+
+        <div class="admin__system-footer g10">
             <a href="/terminals" class="btn btn-default mr-2">Назад</a>
 
             <button-with-pending @click="save" class="btn btn-success" :pending="pending" description="Сохранить">
@@ -311,6 +321,10 @@ export default {
     grid-area: g9;
 }
 
+.g10 {
+    grid-area: g10;
+}
+
 .admin {
     &__system {
         display: grid;
@@ -321,8 +335,8 @@ export default {
         grid-template-areas:
             "g1 g2 g3 g4"
             "g1 g5 g6 g7"
-            "g8 g8 g8 g8"
-            "g9 g9 g9 g9";
+            "g8 g8 g9 g9"
+            "g10 g10 g10 g10";
     }
 
     &__system-card {
