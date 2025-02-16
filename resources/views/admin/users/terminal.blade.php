@@ -5,7 +5,8 @@
 
 @php
     $selectedTerminals = request()->get('hash_id') ?? [];
-    $selectedPoints = request()->get('point_id') ?? []
+    $selectedPoints = request()->get('point_id') ?? [];
+    $selectedSettings = request()->get('settings') ?? 'all';
 @endphp
 
 @section('content')
@@ -114,6 +115,17 @@
                                    value="{{ request()->get('TO_date_check') }}"
                                     name="TO_date_check"
                                     class="form-control"/>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <label for="settings">Наличие настроек:</label>
+                            <select name="settings"
+                                    class="filled-select2 filled-select select2-hidden-accessible"
+                                    aria-hidden="true">
+                                <option value="all" @if($selectedSettings == 'all') selected @endif>Все</option>
+                                <option value="with_settings" @if($selectedSettings == 'with_settings') selected @endif>С настройками</option>
+                                <option value="without_settings" @if($selectedSettings == 'without_settings') selected @endif>Без настроек</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row">

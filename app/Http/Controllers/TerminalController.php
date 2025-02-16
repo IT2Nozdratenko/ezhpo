@@ -35,7 +35,7 @@ class TerminalController extends Controller
                 ->select([
                     'users.*',
                     'terminal_checks.serial_number',
-                    'terminal_checks.date_end_check'
+                    'terminal_checks.date_end_check',
                 ])
                 ->with([
                     'roles',
@@ -47,6 +47,7 @@ class TerminalController extends Controller
                     'terminalCheck'
                 ])
                 ->leftJoin('terminal_checks', 'users.id', '=', 'terminal_checks.user_id')
+                ->leftJoin('terminal_settings', 'users.id', '=', 'terminal_settings.terminal_id')
                 ->leftJoin('model_has_roles', function ($join) {
                     $join->on('users.id', '=', 'model_has_roles.model_id')
                         ->where('model_has_roles.role_id', '=', 9);
@@ -59,6 +60,16 @@ class TerminalController extends Controller
 
             if ($pvId = $request->get('point_id')) {
                 $terminals->whereIn('users.pv_id', $pvId);
+            }
+
+            $settingsFilter = $request->get('settings');
+            if ($settingsFilter && $settingsFilter !== 'all') {
+                if ($settingsFilter === 'with_settings') {
+                    $terminals->whereNotNull('terminal_settings.id');
+                }
+                if ($settingsFilter === 'without_settings') {
+                    $terminals->whereNull('terminal_settings.id');
+                }
             }
 
             if ($companyId = $request->get('company_id')) {
