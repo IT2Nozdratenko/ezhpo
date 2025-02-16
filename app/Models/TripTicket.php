@@ -68,6 +68,10 @@ class TripTicket extends Model
         });
     }
 
+    protected $casts = [
+        'photos' => 'array',
+    ];
+
     protected $fillable = [
         'uuid',
         'ticket_number',
@@ -83,6 +87,7 @@ class TripTicket extends Model
         'template_code',
         'user_id',
         'period_pl',
+        'photos',
     ];
 
     public function driver(): BelongsTo

@@ -165,6 +165,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('mass-trash', 'TripTickets\TripTicketMassTrashController')->name('mass-trash');
             Route::get('{id}/attach-photos', 'TripTickets\TripTicketAttachPhotosPageController')->name('attach-photos-page');
             Route::post('{id}/attach-photos', 'TripTickets\TripTicketAttachPhotosController')->name('attach-photos');
+            Route::post('{id}/delete-photo', 'TripTickets\TripTicketDeletePhotoController')->name('delete-photo');
             Route::get('{id}/{type}', 'TripTickets\TripTicketCreateFormPageController')->name('create-form');
             Route::post('{id}/store-form', 'TripTickets\TripTicketStoreFormController')->name('store-form');
             Route::post('print', 'TripTickets\PrintTripTicketController')->name('print');

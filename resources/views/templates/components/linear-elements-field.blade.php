@@ -44,13 +44,13 @@
             <i class="fa fa-trash"></i> Удалить файл
         </a>
     </div>
+@endif
 
-    @if(isset($v['resize']))
+@if($v['type'] == 'file' && isset($v['resize']))
     <div style="display: none;" id="croppie-block{{ $uniqueInputId }}" class="croppie-block text-center">
         <input type="hidden" name="{{ $k }}_base64" id="croppie-result-base64{{ $uniqueInputId }}">
         <div class="croppie-demo" data-croppie-id="{{ $uniqueInputId }}"></div>
         <button type="button" data-croppie-id="{{ $uniqueInputId }}" class="btn croppie-save btn-sm btn-success">Сохранить обрезку</button>
         <button type="button" data-croppie-id="{{ $uniqueInputId }}" class="btn croppie-delete btn-sm btn-danger">Удалить фото</button>
     </div>
-    @endif
 @endif

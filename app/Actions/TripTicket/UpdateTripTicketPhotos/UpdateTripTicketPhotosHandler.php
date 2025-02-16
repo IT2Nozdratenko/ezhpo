@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Actions\TripTicket\UpdateTripTicketPhotos;
+
+use Illuminate\Http\UploadedFile;
+use Ramsey\Uuid\Uuid;
+use Storage;
+
+final class UpdateTripTicketPhotosHandler
+{
+    public function handle(UpdateTripTicketPhotosAction $action)
+    {
+        $files = $this->storeFiles($action->getPhotos());
+
+        $this->removeFiles($action->getTripTicket()->photos ?: []);
+
+        $action->getTripTicket()
+            ->update([
+                'photos' => $files
+            ]);
+    }
+
+    private function removeFiles(array $files)
+    {
+        foreach ($files as $file) {
+            Storage::disk('public')->delete($file['path']);
+        }
+    }
+
+    private function storeFiles(array $files): array
+    {
+        $processedFiles = [];
+
+        /** @var UploadedFile $file */
+        foreach ($files as $file) {
+            $uuid = Uuid::uuid4()->toString();
+            $extension = $file->getClientOriginalExtension();
+            $filename = $file->getClientOriginalName();
+            $path = Storage::disk('public')->putFileAs('trip-tickets', $file, $uuid.'.'.$extension);
+
+            $processedFiles[] = [
+                'original_name' => $filename,
+                'path' => $path,
+            ];
+        }
+
+        return $processedFiles;
+    }
+}
