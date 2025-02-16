@@ -483,6 +483,8 @@ class SdpoController extends Controller
             );
         }
 
+        $settings->getMain()->setSetting('terminal_is_blocked', $user->blocked == 1);
+
         return response()->json($settings->toArray());
     }
 
