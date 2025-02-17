@@ -21,9 +21,15 @@
             <div class="card">
                 <div class="card-body">
                     <p><b>Загрузка фото ПЛ</b></p>
-                    @foreach($errors ?? [] as $error)
-                        <div>{{ $error }}</div>
-                    @endforeach
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     <form method="POST"
                           action="{{ route('trip-tickets.attach-photos', ['id' => $id]) }}"

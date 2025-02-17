@@ -12,11 +12,9 @@ final class UpdateTripTicketPhotosHandler
     {
         $files = $this->storeFiles($action->getPhotos());
 
-        $this->removeFiles($action->getTripTicket()->photos ?: []);
-
         $action->getTripTicket()
             ->update([
-                'photos' => $files
+                'photos' => array_merge($files, $action->getTripTicket()->photos ?: [])
             ]);
     }
 

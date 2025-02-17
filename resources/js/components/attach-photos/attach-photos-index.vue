@@ -42,10 +42,10 @@ export default {
 
         newPhotos = Array.from(uniqueFiles.values())
 
-        if (newPhotos.length > 5) {
+        if (this.items.length + newPhotos.length > 4) {
           swal.fire({
             title: 'Ошибка',
-            text: 'Максимальное количество файлов: 5',
+            text: 'Максимальное количество файлов: 4',
             icon: 'error'
           })
 
@@ -71,7 +71,7 @@ export default {
             path
           })
           .then(() => {
-            // location.reload()
+            location.reload()
           })
           .catch(error => {
             console.log(error.response.data)
@@ -115,7 +115,7 @@ export default {
     </div>
 
     <div v-if="this.items.length" id="preview" class="d-flex flex-column mt-3">
-      <p><b>Сохраненные фото:</b></p>
+      <p><b>Загруженные на сервер фото:</b></p>
 
       <div v-for="(photo, index) in this.items" class="row photo-item-div">
         <div class="col-md-12 input-group d-flex justify-content-between align-items-center">
@@ -135,7 +135,7 @@ export default {
     </div>
 
     <div v-if="this.photos.length" id="preview" class="d-flex flex-column mt-3">
-      <p><b>Загруженные фото:</b></p>
+      <p><b>Фото для загрузки:</b></p>
 
       <div v-for="(photo, index) in this.photos" class="row photo-item-div">
         <div class="col-md-12 input-group">
