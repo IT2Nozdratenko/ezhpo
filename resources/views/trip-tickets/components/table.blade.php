@@ -64,6 +64,10 @@
                         {{ \App\Enums\TransportationTypeEnum::getLabel($tripTicket[$field->field]) }}
                     @elseif($field->field === 'template_code')
                         {{ \App\Enums\TripTicketTemplateEnum::getLabel($tripTicket[$field->field]) }}
+                    @elseif($field->field === 'photos' && $tripTicket[$field->field])
+                        <a class="photos-modal-btn" data-toggle="modal" data-target="#photos-view" style="cursor: pointer" data-id="{{ $tripTicket->uuid }}">
+                            <i class="fa fa-camera"></i>
+                        </a>
                     @else
                         {{ $tripTicket[$field->field] }}
                     @endif
@@ -106,20 +110,17 @@
                         <a href="{{ route('trip-tickets.create-form', ['id' => $tripTicket->uuid, 'type' => \App\Enums\FormTypeEnum::TECH]) }}" class="dropdown-item">
                             <i class="fa fa-plus"></i> Добавить ТО</a>
                     @endif
-
                     @if($permissionToUpdate)
                         <a class="dropdown-item form-actions-modal-btn" data-toggle="modal" data-target="#from-actions" style="cursor: pointer" data-id="{{ $tripTicket->uuid }}">
                             &plusmn; Привязать/отвязать МО и ТО
                         </a>
                     @endif
-
                     @if($permissionToPrintTripTickets)
                         <a class="dropdown-item download-excel-to-print-btn"
                            data-uuid="{{ $tripTicket->uuid }}" style="cursor: pointer">
                              Печать ПЛ
                         </a>
                     @endif
-
                     @if($permissionToDelete)
                         <a
                             href="{{ route('trip-tickets.trash', ['id' => $tripTicket->uuid, 'action' => request()->get('trash') ? 0 : 1]) }}"
@@ -140,3 +141,4 @@
 </table>
 
 @component('trip-tickets.components.form-actions-modal')@endcomponent
+@component('trip-tickets.components.photos-modal')@endcomponent

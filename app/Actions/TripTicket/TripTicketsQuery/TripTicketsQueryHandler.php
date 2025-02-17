@@ -28,6 +28,7 @@ final class TripTicketsQueryHandler
             'trip_tickets.logistics_method',
             'trip_tickets.transportation_type',
             'trip_tickets.template_code',
+            'trip_tickets.photos',
             'trip_tickets.created_at',
 
             'companies.name as company_name',

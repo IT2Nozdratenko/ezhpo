@@ -71,6 +71,14 @@
         .form-link {
             font-size: 13px;
         }
+
+        .photo {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
     </style>
 @endsection
 
@@ -494,6 +502,37 @@
                         location.reload()
                     })
             })
+
+            $('table').on('click', '.photos-modal-btn', function () {
+                currentTripTicketId = $(this).data('id')
+
+                axios
+                    .get('{{ route('trip-tickets.get-photos') }}', {
+                        params: {
+                            id: currentTripTicketId
+                        }
+                    })
+                    .then(response => {
+                        const {data} = response
+
+                        const wrapper = $('.photos-wrapper')
+                        wrapper.empty()
+
+                        data.photos.forEach(photo => {
+                            const html = `
+                                <div class="row">
+                                    <div class="col-md-12 d-flex flex-column align-items-center">
+                                        <p><a href="${photo.url}" target="_blank"><img class="photo" src="${photo.url}" alt="${photo.original_name}"></a>
+                                    </div>
+                                </div>`
+
+                            wrapper.append(html)
+                        })
+
+
+                    })
+            })
+
         })
     </script>
 @endsection
