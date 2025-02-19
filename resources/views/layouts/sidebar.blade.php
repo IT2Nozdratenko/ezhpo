@@ -2,7 +2,7 @@
     use App\Enums\FormTypeEnum;
     use Illuminate\Support\Facades\Cache;
     use App\Models\Forms\Form;
-    use App\Services\Terminals\TerminalsToCheckService;
+    use App\Actions\Terminals\GetTerminalsToCheck\GetTerminalsToCheckQuery;
 
     /** @var \App\User $user */
     $user = \Illuminate\Support\Facades\Auth::user();
@@ -58,7 +58,7 @@
         );
 @endphp
 
-    <!-- Side Navbar -->
+        <!-- Side Navbar -->
 <nav class="side-navbar">
     <!-- Sidebar Header-->
     <div class="sidebar-header d-flex align-items-center">
@@ -84,7 +84,7 @@
             <li>
                 <a href="{{ route('forms.index', ['type' => FormTypeEnum::MEDIC]) }}"
                    class="bg-red text-white"><i
-                        class="icon-padnote"></i>Провести мед. осмотр</a>
+                            class="icon-padnote"></i>Провести мед. осмотр</a>
             </li>
         @endif
 
@@ -92,7 +92,7 @@
             <li>
                 <a href="{{ route('forms.index', ['type' => FormTypeEnum::TECH]) }}"
                    class="bg-blue text-white"><i
-                        class="icon-padnote"></i>Провести тех. осмотр</a>
+                            class="icon-padnote"></i>Провести тех. осмотр</a>
             </li>
         @endif
 
@@ -100,28 +100,28 @@
             <li>
                 <a href="{{ route('forms.index', ['type' => FormTypeEnum::REPORT_CARD]) }}"
                    class="bg-gray"><i
-                        class="icon-padnote"></i>Внести Отчёт с карты</a>
+                            class="icon-padnote"></i>Внести Отчёт с карты</a>
             </li>
         @endif
 
         @if($user->access('print_register_pl_create'))
             <li>
                 <a href="{{ route('forms.index', ['type' => FormTypeEnum::PRINT_PL]) }}" class="bg-gray"><i
-                        class="icon-padnote"></i>Внести запись в Реестр печати ПЛ</a>
+                            class="icon-padnote"></i>Внести запись в Реестр печати ПЛ</a>
             </li>
         @endif
 
         @if($user->access('trip_tickets_create'))
             <li>
                 <a href="{{ route('trip-tickets.create') }}" class="bg-gray"><i
-                        class="icon-padnote"></i>Внести путевой лист</a>
+                            class="icon-padnote"></i>Внести путевой лист</a>
             </li>
         @endif
 
         @if($user->access('journal_briefing_bdd_create'))
             <li>
                 <a href="{{ route('forms.index', ['type' => FormTypeEnum::BDD]) }}" class="bg-gray"><i
-                        class="icon-padnote"></i>Внести Инструктаж БДД</a>
+                            class="icon-padnote"></i>Внести Инструктаж БДД</a>
             </li>
         @endif
 
@@ -186,7 +186,7 @@
                     @if($user->access('map_report_read'))
                         <li>
                             <a href="{{ route('home', FormTypeEnum::REPORT_CARD) }}"><i
-                                    class="fa fa-book"></i>Реестр снятия
+                                        class="fa fa-book"></i>Реестр снятия
                                 отчетов
                                 с карт</a>
                         </li>
@@ -204,7 +204,7 @@
                         @endphp
                         <li>
                             <a href="{{ route('home', 'pak') }}"><i class="fa fa-close"></i>Реестр ошибок СДПО <span
-                                    class="badge bg-primary text-white">{{ $countErrorsPak < 99 ? $countErrorsPak : '99+' }}
+                                        class="badge bg-primary text-white">{{ $countErrorsPak < 99 ? $countErrorsPak : '99+' }}
                             </a>
                         </li>
                     @endif
@@ -246,7 +246,7 @@
         @if($accessToElements)
             <li>
                 <a href="#" data-btn-collapse="#phoenic" role="button"> <i
-                        class="icon-interface-windows"></i>CRM</a>
+                            class="icon-interface-windows"></i>CRM</a>
                 <ul id="phoenic" class="collapse list-unstyle">
 
                     @if($user->access('contract_read', 'contract_create'))
@@ -306,7 +306,7 @@
                     @endif
 
                     @if($user->access('employee_read', 'employee_create'))
-                        <li><a href="{{ route('users') }}">Сотрудники</a></li>
+                        <li><a href="{{ route('employees.index') }}">Сотрудники</a></li>
                     @endif
 
                     @if($user->access('group_read', 'group_create'))
@@ -315,22 +315,22 @@
 
                     @if($user->access('pak_sdpo_read', 'pak_sdpo_create'))
                         @php
-                            $service = new TerminalsToCheckService();
-                            $needToCheck = $service->getIds();
+                            $query = new GetTerminalsToCheckQuery();
+                            $terminalsToCheckViewModel = $query->get();
 
-                            $lessMonthCount = count($needToCheck['less_month']);
-                            $expiredCount = count($needToCheck['expired']);
+                            $lessMonthCount = count($terminalsToCheckViewModel->getLessMonth());
+                            $expiredCount = count($terminalsToCheckViewModel->getExpired());
                         @endphp
                         <li>
                             <a href="{{ route('terminals.index') }}">
                                 Терминалы
                                 @if($lessMonthCount)
                                     <span
-                                        class="badge bg-warning text-white">{{ $lessMonthCount < 99 ? $lessMonthCount : '99+' }}</span>
+                                            class="badge bg-warning text-white">{{ $lessMonthCount < 99 ? $lessMonthCount : '99+' }}</span>
                                 @endif
                                 @if($expiredCount)
                                     <span
-                                        class="badge bg-primary text-white">{{ $expiredCount < 99 ? $expiredCount : '99+' }}</span>
+                                            class="badge bg-primary text-white">{{ $expiredCount < 99 ? $expiredCount : '99+' }}</span>
                                 @endif
                             </a>
                         </li>

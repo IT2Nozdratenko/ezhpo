@@ -5,14 +5,14 @@
 
 @php
     $selectedTerminals = request()->get('hash_id') ?? [];
-    $selectedPoints = request()->get('point_id') ?? []
+    $selectedPoints = request()->get('point_id') ?? [];
 @endphp
 
 @section('content')
     <div class="card mb-3">
         <div class="card-body">
             @if($current_user_permissions['permission_to_view'])
-                <form action="" method="GET">
+                <form action="{{ route('terminals.index') }}" method="GET">
                     @if(request()->get('deleted'))
                         <input type="hidden" value="1" name="deleted">
                     @endif
@@ -127,15 +127,13 @@
         </div>
     </div>
 
-    <admin-terminals-index
-        :roles='@json($roles)'
+    <terminals-index-widget
         :deleted='{{ request()->get('deleted', 0) }}'
         :current_user_permissions='@json($current_user_permissions)'
-        :all_permissions='@json($all_permissions)'
         :points='@json($pointsToTable)'
         :fields='@json($fields)'
         :devices-options='@json($devicesOptions)'
-    ></admin-terminals-index>
+    ></terminals-index-widget>
 @endsection
 
 @push('setup-scripts')

@@ -11,7 +11,7 @@ class TerminalCheck extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id',
+        'terminal_id',
         'serial_number',
         'date_check',
         'date_end_check'

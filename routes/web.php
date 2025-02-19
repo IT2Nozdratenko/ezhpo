@@ -61,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('employees')->as('employees.')->middleware('auth')->group(function () {
         Route::get('/', 'Employees\IndexEmployeesPageController')->name('index');
         Route::post('/', 'Employees\CreateEmployeeController')->name('create');
-        Route::get('/table', 'Employees\GetEmployeesTableItemsController')->name('table');
+        Route::get('/table-items', 'Employees\GetEmployeesTableItemsController')->name('table-items');
         Route::get('/{id}', 'Employees\GetEmployeeItemController')->name('item');
         Route::delete('/{id}', 'Employees\DeleteEmployeeController')->name('delete');
         Route::put('/{id}', 'Employees\UpdateEmployeeController')->name('update');
@@ -70,10 +70,14 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('terminals')->as('terminals.')->group(function () {
-        Route::get('/', 'TerminalController@index')->name('index');
-        Route::post('/', 'TerminalController@update')->name('update');
-        Route::get('status', 'TerminalController@getConnectionStatus')->name('status');
-        Route::get('to-check', 'TerminalController@terminalsToCheck')->name('to-check');
+        Route::get('/', 'Terminals\IndexTerminalsPageController')->name('index');
+        Route::get('/table-items', 'Terminals\GetTerminalsTableItemsController')->name('table-items');
+        Route::get('to-check', 'Terminals\GetTerminalsToCheckController')->name('to-check');
+        Route::get('/{id}', 'Terminals\GetTerminalItemController')->name('item');
+        Route::post('/', 'Terminals\CreateTerminalController')->name('store');
+        Route::put('/{id}', 'Terminals\UpdateTerminalController')->name('update');
+        Route::delete('/{id}', 'Terminals\DeleteTerminalController')->name('delete');
+        Route::post('/status', 'Terminals\GetTerminalsConnectionStatusController')->name('status');
     });
 
     Route::resource('roles', 'RoleController');

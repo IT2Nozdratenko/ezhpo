@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Employees;
 use App\Actions\Employees\RestoreEmployee\RestoreEmployeeCommand;
 use App\Actions\Employees\RestoreEmployee\RestoreEmployeeHandler;
 use App\Http\Controllers\Controller;
-use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class RestoreEmployeeController extends Controller
 {
@@ -21,12 +21,14 @@ final class RestoreEmployeeController extends Controller
             DB::commit();
 
             return response()->json()->setStatusCode(Response::HTTP_CREATED);
-        } catch (ValidationException $exception) {
+        } catch (NotFoundHttpException $exception) {
             DB::rollBack();
 
-            return response()->json([
-                'message' => $exception->errors(),
-            ], Response::HTTP_BAD_REQUEST);
+            return response()
+                ->json([
+                    'message' => $exception->getMessage(),
+                ])
+                ->setStatusCode(Response::HTTP_NOT_FOUND);
         } catch (\Throwable $exception) {
             DB::rollBack();
 

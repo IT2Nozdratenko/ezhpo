@@ -28,47 +28,47 @@ class User extends Authenticatable
     const DEFAULT_USER_LOGIN = 'it@nozdratenko.ru';
 
     public $fillable = [
-            'hash_id',
-            'req_id',
-            'photo',
-            'name',
-            'email',
-            'password',
-            'eds',
-            'pv_id',
-            'timezone',
-            'role',
-            'blocked',
-            'pv_id_default',
-            'api_token',
-            'login',
-            'user_post',
-            'company_id',
-            'deleted_id',
-            'last_connection_at',
-            'stamp_id',
-            'validity_eds_start',
-            'validity_eds_end',
-            'accepted_agreement',
-            'deleted_at',
-            'auto_created',
-            'entity_id',
-            'entity_type',
-        ];
+        'hash_id',
+        'req_id',
+        'photo',
+        'name',
+        'email',
+        'password',
+        'eds',
+        'pv_id',
+        'timezone',
+        'role',
+        'blocked',
+        'pv_id_default',
+        'api_token',
+        'login',
+        'user_post',
+        'company_id',
+        'deleted_id',
+        'last_connection_at',
+        'stamp_id',
+        'validity_eds_start',
+        'validity_eds_end',
+        'accepted_agreement',
+        'deleted_at',
+        'auto_created',
+        'entity_id',
+        'entity_type',
+    ];
 
     protected $hidden = [
-            'password',
-        ];
+        'password',
+    ];
 
     protected $casts = [
-            'email_verified_at' => 'datetime',
-            'last_connection_at' => 'datetime',
-        ];
+        'email_verified_at' => 'datetime',
+        'last_connection_at' => 'datetime',
+    ];
 
     public static $defaultUserJournalByRole = [
-            '1' => FormTypeEnum::TECH,
-            '4' => FormTypeEnum::PAK_QUEUE
-        ];
+        '1' => FormTypeEnum::TECH,
+        '4' => FormTypeEnum::PAK_QUEUE
+    ];
 
     protected static function boot()
     {
@@ -138,25 +138,9 @@ class User extends Authenticatable
         return $this->hasMany(Company::class);
     }
 
-    public function pv(): BelongsTo
-    {
-        return $this->belongsTo(Point::class, 'pv_id')
-            ->withDefault();
-    }
-
     public function points(): BelongsToMany
     {
         return $this->belongsToMany(Point::class, 'points_to_users', 'user_id', 'point_id');
-    }
-
-    public function terminalDevices(): HasMany
-    {
-        return $this->hasMany(TerminalDevice::class, 'user_id');
-    }
-
-    public function terminalCheck(): HasOne
-    {
-        return $this->hasOne(TerminalCheck::class, 'user_id');
     }
 
     public function access(...$permissionName): bool
@@ -177,15 +161,15 @@ class User extends Authenticatable
             $company = $point->company_id ? Company::find($point->company_id) : 0;
 
             if ($company) {
-               return $company->$field;
+                return $company->$field;
             }
 
         }
 
-	    if ($withUserCompanyId && $authUser->company_id !== null) {
+        if ($withUserCompanyId && $authUser->company_id !== null) {
             $company = Company::find($authUser->company_id);
 
-            if (! $company) {
+            if (!$company) {
                 return -1;
             }
 
@@ -193,11 +177,6 @@ class User extends Authenticatable
         }
 
         return -1;
-    }
-
-    public function stamp(): BelongsTo
-    {
-        return $this->belongsTo(Stamp::class, 'stamp_id', 'id');
     }
 
     /**

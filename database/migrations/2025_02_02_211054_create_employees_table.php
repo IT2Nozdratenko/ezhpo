@@ -15,6 +15,7 @@ class CreateEmployeesTable extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('hash_id')->default('000000');
             $table->string('name');
             $table->integer('blocked')->default(0);
             $table->integer('pv_id')->default(0);

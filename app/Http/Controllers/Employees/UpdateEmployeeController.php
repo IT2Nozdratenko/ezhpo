@@ -6,9 +6,9 @@ use App\Actions\Employees\UpdateEmployee\UpdateEmployeeCommand;
 use App\Actions\Employees\UpdateEmployee\UpdateEmployeeHandler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Employees\UpdateEmployeeRequest;
-use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class UpdateEmployeeController extends Controller
 {
@@ -37,12 +37,14 @@ final class UpdateEmployeeController extends Controller
             DB::commit();
 
             return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
-        } catch (ValidationException $exception) {
+        } catch (NotFoundHttpException $exception) {
             DB::rollBack();
 
-            return response()->json([
-                'message' => $exception->errors(),
-            ], Response::HTTP_BAD_REQUEST);
+            return response()
+                ->json([
+                    'message' => $exception->getMessage(),
+                ])
+                ->setStatusCode(Response::HTTP_NOT_FOUND);
         } catch (\Throwable $exception) {
             DB::rollBack();
 

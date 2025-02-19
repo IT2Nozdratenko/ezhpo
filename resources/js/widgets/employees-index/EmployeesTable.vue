@@ -98,6 +98,7 @@ const displayedItems = computed(() => {
   return props.items.map((item) => {
     return {
       id: item.id,
+      hash_id: item.hash_id,
       photo: item.user.photo,
       name: item.name,
       login: item.user.login,

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Actions\Employees\DeleteEmployee;
+namespace App\Actions\Terminals\DeleteTerminal;
 
 use App\Actions\User\DeleteUser\DeleteUserCommand;
-use App\Employee;
+use App\Terminal;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-final class DeleteEmployeeHandler
+final class DeleteTerminalHandler
 {
     /**
      * @var Dispatcher
@@ -22,19 +22,20 @@ final class DeleteEmployeeHandler
         $this->dispatcher = $dispatcher;
     }
 
-    public function handle(DeleteEmployeeCommand $command)
+    public function handle(DeleteTerminalCommand $command)
     {
-        $employee = Employee::find($command->getId());
-        if (!$employee) {
-            throw new NotFoundHttpException('Сотрудник не найден');
+        $terminal = Terminal::find($command->getId());
+
+        if (!$terminal) {
+            throw new NotFoundHttpException('Терминал не найден');
         }
 
-        $user = $employee->user;
+        $user = $terminal->user;
         if (!$user) {
             throw new NotFoundHttpException('Пользователь не найден');
         }
 
-        $employee->delete();
+        $terminal->delete();
 
         $this->dispatcher->dispatch(new DeleteUserCommand($user));
     }

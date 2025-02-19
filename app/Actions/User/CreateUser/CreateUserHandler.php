@@ -12,12 +12,6 @@ final class CreateUserHandler
 
     public function handle(CreateUserCommand $command): User
     {
-        $existedUser = User::withTrashed()->where('login', '=', $command->getLogin())->first();
-
-        if ($existedUser) {
-            throw new \DomainException('Пользователь с таким логином уже существует');
-        }
-
         $hashId = $this->resolveHashId();
 
         $user = User::create([

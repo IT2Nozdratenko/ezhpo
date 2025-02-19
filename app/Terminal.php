@@ -5,6 +5,9 @@ namespace App;
 use App\Enums\UserEntityType;
 use App\Traits\HasUserRelation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class Terminal extends Model
@@ -14,6 +17,7 @@ final class Terminal extends Model
     const ENTITY_TYPE = UserEntityType::TERMINAL;
 
     public $fillable = [
+        'hash_id',
         'name',
         'blocked',
         'pv_id',
@@ -30,5 +34,26 @@ final class Terminal extends Model
         $this->save();
 
         return parent::delete();
+    }
+
+    public function pv(): BelongsTo
+    {
+        return $this->belongsTo(Point::class, 'pv_id')
+            ->withDefault();
+    }
+
+    public function stamp(): BelongsTo
+    {
+        return $this->belongsTo(Stamp::class, 'stamp_id', 'id');
+    }
+
+    public function terminalDevices(): HasMany
+    {
+        return $this->hasMany(TerminalDevice::class, 'terminal_id');
+    }
+
+    public function terminalCheck(): HasOne
+    {
+        return $this->hasOne(TerminalCheck::class, 'terminal_id');
     }
 }

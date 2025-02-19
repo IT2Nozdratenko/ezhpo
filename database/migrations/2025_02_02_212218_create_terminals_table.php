@@ -15,15 +15,16 @@ class CreateTerminalsTable extends Migration
     {
         Schema::create('terminals', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('hash_id')->default('000000');
             $table->string('name');
             $table->integer('blocked')->default(0);
             $table->integer('pv_id')->default(0);
             $table->integer('stamp_id')->nullable();
             $table->dateTime('last_connection_at')->nullable();
             $table->boolean('auto_created')->default(false);
+            $table->timestamps();
             $table->softDeletes();
             $table->string('deleted_id', 191)->nullable();
-            $table->timestamps();
         });
     }
 

@@ -2,22 +2,12 @@
 
 namespace App\Actions\User\UpdateUser;
 
-use App\User;
 use Illuminate\Support\Facades\Hash;
 
 final class UpdateUserHandler
 {
     public function handle(UpdateUserCommand $command)
     {
-        $existedUser = User::withTrashed()
-            ->where('id', '!=', $command->getUser()->id)
-            ->where('login', '=', $command->getLogin())
-            ->first();
-
-        if ($existedUser) {
-            throw new \DomainException('Пользователь с таким логином уже существует');
-        }
-
         $user = $command->getUser();
 
         $user->login = $command->getLogin();

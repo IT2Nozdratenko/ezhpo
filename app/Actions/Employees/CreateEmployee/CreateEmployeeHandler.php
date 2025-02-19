@@ -5,11 +5,15 @@ namespace App\Actions\Employees\CreateEmployee;
 use App\Actions\User\CreateUser\CreateUserCommand;
 use App\Employee;
 use App\Enums\UserEntityType;
+use App\GenerateHashIdTrait;
+use App\User;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Facades\Hash;
 
 final class CreateEmployeeHandler
 {
+    use GenerateHashIdTrait;
+
     /**
      * @var Dispatcher
      */
@@ -25,7 +29,16 @@ final class CreateEmployeeHandler
 
     public function handle(CreateEmployeeCommand $command)
     {
+        $existedUser = User::withTrashed()->where('login', '=', $command->getLogin())->first();
+
+        if ($existedUser) {
+            throw new \DomainException('Пользователь с таким логином уже существует');
+        }
+
+        $hashId = $this->resolveHashId();
+
         $employee = Employee::create([
+            'hash_id' => $hashId,
             'name' => $command->getName(),
             'blocked' => $command->getBlocked(),
             'pv_id' => $command->getPvId(),
@@ -52,5 +65,23 @@ final class CreateEmployeeHandler
 
         // todo: points должны быть у employee
         $user->points()->sync($command->getPvs());
+    }
+
+    private function resolveHashId(): int
+    {
+        $validator = function (int $hashId) {
+            if (Employee::where('hash_id', $hashId)->first()) {
+                return false;
+            }
+
+            return true;
+        };
+
+        return $this->generateHashId(
+            $validator,
+            config('app.hash_generator.user.min'),
+            config('app.hash_generator.user.max'),
+            config('app.hash_generator.user.tries')
+        );
     }
 }

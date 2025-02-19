@@ -1,5 +1,5 @@
 export const fetchEmployeesTableItems = async (params) => {
-  return await axios.get('/employees/table' + window.location.search, {
+  return await axios.get('/employees/table-items' + window.location.search, {
     params: {
       sortBy: params.sortBy,
       sortDesc: params.sortDesc,

@@ -49,6 +49,7 @@ final class EmployeesDataTransferCommand extends Command
                 }
 
                 $employee = Employee::create([
+                    'hash_id' => $user->hash_id,
                     'name' => $user->name,
                     'blocked' => $user->blocked,
                     'pv_id' => $user->pv_id,

@@ -1,33 +1,27 @@
 <?php
 
-namespace App\Services\Terminals;
+namespace App\Actions\Terminals\GetTerminalsToCheck;
 
 use App\TerminalCheck;
 use Carbon\Carbon;
 
-final class TerminalsToCheckService
+final class GetTerminalsToCheckQuery
 {
-    /**
-     * @return array{
-     *     'less_month': array,
-     *     'expired': array,
-     * }
-     */
-    public function getIds(): array
+    public function get(): TerminalsToCheckViewModel
     {
         $terminalChecks = TerminalCheck::query()
             ->select([
                 'terminal_checks.date_end_check',
-                'users.hash_id as user_hash_id'
+                'terminals.hash_id as terminal_hash_id'
             ])
-            ->leftJoin('users', 'terminal_checks.user_id', '=', 'users.id')
+            ->leftJoin('terminals', 'terminal_checks.terminal_id', '=', 'terminals.id')
             ->get();
 
         $now = Carbon::now();
 
         $lessMonth = $terminalChecks
             ->filter(function (TerminalCheck $terminalCheck) use ($now) {
-                if (!$terminalCheck->user_hash_id) {
+                if (!$terminalCheck->terminal_hash_id) {
                     return false;
                 }
 
@@ -39,13 +33,14 @@ final class TerminalsToCheckService
                     $now->diffInDays($terminalCheck->date_end_check) <= 30;
             })
             ->map(function (TerminalCheck $terminalCheck) {
-                return $terminalCheck->user_hash_id;
+                return $terminalCheck->terminal_hash_id;
             })
-            ->values();
+            ->values()
+            ->toArray();
 
         $expired = $terminalChecks
             ->filter(function (TerminalCheck $terminalCheck) use ($now) {
-                if (!$terminalCheck->user_hash_id) {
+                if (!$terminalCheck->terminal_hash_id) {
                     return false;
                 }
 
@@ -56,13 +51,11 @@ final class TerminalsToCheckService
                 return $now->greaterThan($terminalCheck->date_end_check);
             })
             ->map(function (TerminalCheck $terminalCheck) {
-                return $terminalCheck->user_hash_id;
+                return $terminalCheck->terminal_hash_id;
             })
-            ->values();
+            ->values()
+            ->toArray();
 
-        return [
-            'less_month' => $lessMonth,
-            'expired' => $expired
-        ];
+        return new TerminalsToCheckViewModel($lessMonth, $expired);
     }
 }

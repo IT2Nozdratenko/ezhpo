@@ -15,6 +15,7 @@ final class Employee extends Model
     const ENTITY_TYPE = UserEntityType::EMPLOYEE;
 
     public $fillable = [
+        'hash_id',
         'name',
         'blocked',
         'pv_id',

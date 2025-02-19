@@ -11,7 +11,7 @@ class TerminalDevice extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id',
+        'terminal_id',
         'device_name',
         'device_serial_number',
     ];

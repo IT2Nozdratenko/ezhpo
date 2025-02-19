@@ -46,6 +46,7 @@ final class TerminalsDataTransferCommand extends Command
                 }
 
                 $terminal = Terminal::create([
+                    'hash_id' => $user->hash_id,
                     'name' => $user->name,
                     'blocked' => $user->blocked,
                     'pv_id' => $user->pv_id,
@@ -55,6 +56,18 @@ final class TerminalsDataTransferCommand extends Command
                     'deleted_at' => $user->deleted_at,
                     'deleted_id' => $user->deleted_id,
                 ]);
+
+                DB::table('terminal_devices')
+                    ->where('user_id', '=', $user->id)
+                    ->update([
+                        'terminal_id' => $terminal->id,
+                    ]);
+
+                DB::table('terminal_checks')
+                    ->where('user_id', '=', $user->id)
+                    ->update([
+                        'terminal_id' => $terminal->id,
+                    ]);
 
                 $user->entity_id = $terminal->id;
                 $user->entity_type = UserEntityType::TERMINAL;
