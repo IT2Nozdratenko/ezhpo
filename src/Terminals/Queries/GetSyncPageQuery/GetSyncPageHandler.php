@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Src\Terminals\Queries\GetSyncPageQuery;
 
 use App\User;
+use Carbon\Carbon;
 use Src\Terminals\Eloquent\TerminalSettings;
 use Src\Terminals\Factories\SettingsFactory;
 use Src\Terminals\ValueObjects\Settings;
@@ -45,6 +46,29 @@ final class GetSyncPageHandler
             $firstTerminalId = $query->getTerminalIds()[0];
         }
 
+        $medics = User::query()
+            ->with([
+                'roles',
+                'pv:id,name,pv_id',
+                'pv.town:id,name'
+            ])
+            ->whereHas('roles', function ($q) {
+                $q->where('roles.id', 2);
+            })
+            ->orderBy('name')
+            ->get()
+            ->map(function (User $medic) {
+                return new MedicTerminalViewModel(
+                    $medic->id,
+                    $medic->name,
+                    $medic->eds,
+                    Carbon::parse($medic->validity_eds_start),
+                    $medic->validity_eds_end ? Carbon::parse($medic->validity_eds_end) : null,
+                    $medic->pv->name
+                );
+            })
+            ->toArray();
+
         $settings = optional(TerminalSettings::settingsForTerminal($firstTerminalId)->first())->settings;
 
         if ($settings === null) {
@@ -56,7 +80,8 @@ final class GetSyncPageHandler
 
         return new GetSyncPageResponse(
             $terminals,
-            $settings
+            $settings,
+            $medics,
         );
     }
 }

@@ -32,5 +32,6 @@
     <script>
         window.PAGE_SETUP.settings = @json($response->getSettings()->toArray());
         window.PAGE_SETUP.terminals = @json($response->getTerminalsArray());
+        window.PAGE_SETUP.medics = @json($response->getMedicsArray());
     </script>
 @endpush

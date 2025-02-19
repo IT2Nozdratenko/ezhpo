@@ -12,7 +12,7 @@ final class SettingsFactory
         'main' => [
             'password' => '0000',
             'medic_password' => '0000',
-            "support_phone" => '+7 (916) 363-59-07',
+            'selected_medic' => null,
         ],
         'system' => [
             "driver_info" => false,

@@ -337,6 +337,26 @@
                                 </div>
                             </div>
 
+                            <div class="form-group col-lg-6">
+                                <label for="timeout" class="mb-1">Телефон поддержки для СДПО</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="sdpo_support_phone">
+                                            <i class="fa fa-phone"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="sdpo_support_phone"
+                                           style="height: auto"
+                                           placeholder="Введите телефон"
+                                           name="sdpo_support_phone"
+                                           aria-describedby="timeout"
+                                           value="{{ $sdpo_support_phone }}"
+                                    >
+                                </div>
+                            </div>
+
                             <div class="form-group col-12">
                                 <button type="submit" class="btn btn-success float-right">Сохранить</button>
                             </div>
