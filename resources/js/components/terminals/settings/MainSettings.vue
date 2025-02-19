@@ -12,6 +12,7 @@ export default {
             pending: false,
             settings: window.PAGE_SETUP.settings,
             terminals: window.PAGE_SETUP.terminals,
+            medics: window.PAGE_SETUP.medics,
         }
     },
     mounted() {
@@ -20,7 +21,6 @@ export default {
     methods: {
         save() {
             this.pending = true;
-            console.log(this.settings)
             axios.post(`/terminals/sync-settings`, {
                 settings: this.settings,
                 terminal_ids: this.terminals.map(({id}) => id),
@@ -265,11 +265,13 @@ export default {
 
         <div class="admin__system-card g9">
             <div class="admin__system-card__title">
-                Контактные данные
+                Настройки сотрудников
             </div>
             <div class="admin__system-card__item">
-                <span>Телефон поддержки</span>
-                <input class="large" type="text" v-model="settings.main.support_phone">
+                <span>Выбранный медик</span>
+                <select v-model="settings.main.selected_medic" class="large">
+                    <option v-for="medic in medics" :value="medic.id">{{ medic.name }} ({{ medic.pv_name }})</option>
+                </select>
             </div>
         </div>
 

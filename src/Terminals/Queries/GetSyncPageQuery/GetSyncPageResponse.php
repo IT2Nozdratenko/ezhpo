@@ -13,14 +13,19 @@ final class GetSyncPageResponse
     /** @var Settings */
     private $settings;
 
+    /** @var array<MedicTerminalViewModel> */
+    private $medics;
+
     /**
      * @param TerminalViewModel[] $terminals
      * @param Settings $settings
+     * @param array $medics
      */
-    public function __construct(array $terminals, Settings $settings)
+    public function __construct(array $terminals, Settings $settings, array $medics)
     {
         $this->terminals = $terminals;
         $this->settings = $settings;
+        $this->medics = $medics;
     }
 
     public function getTerminals(): array
@@ -38,6 +43,13 @@ final class GetSyncPageResponse
         return array_map(function (TerminalViewModel $terminal) {
             return $terminal->toArray();
         }, $this->terminals);
+    }
+
+    public function getMedicsArray(): array
+    {
+        return array_map(function (MedicTerminalViewModel $viewModel) {
+            return $viewModel->toArray();
+        }, $this->medics);
     }
 
     public function isDefault(): bool

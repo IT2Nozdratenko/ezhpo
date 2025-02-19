@@ -21,7 +21,7 @@ final class SyncTerminalSettingsController
                 $request->input('terminal_ids'),
                 new Settings(
                     SettingsFactory::makeMain($request->input('settings.main', [])),
-                    SettingsFactory::makeMain($request->input('settings.system', []))
+                    SettingsFactory::makeSystem($request->input('settings.system', []))
                 )
             ));
 

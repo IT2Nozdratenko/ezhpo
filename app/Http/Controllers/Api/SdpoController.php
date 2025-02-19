@@ -484,6 +484,20 @@ class SdpoController extends Controller
         }
 
         $settings->getMain()->setSetting('terminal_is_blocked', $user->blocked == 1);
+        $settings->getMain()->setSetting('support_phone', Settings::setting('sdpo_support_phone'));
+
+        $medic = User::query()
+            ->select([
+                'id',
+                'name',
+                'eds',
+                'validity_eds_start',
+                'validity_eds_end'
+            ])
+            ->where('id', '=', $settings->getMain()->getSetting('selected_medic'))
+            ->first();
+
+        $settings->getMain()->setSetting('selected_medic', $medic->toArray());
 
         return response()->json($settings->toArray());
     }
