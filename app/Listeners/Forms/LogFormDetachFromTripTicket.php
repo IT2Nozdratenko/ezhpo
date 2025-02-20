@@ -29,7 +29,7 @@ class LogFormDetachFromTripTicket
     {
         FormEvent::create([
             'user_id' => $event->getUser()->id,
-            'event_type' => FormLogActionTypesEnum::DETACH_TRIP_TICKET,
+            'event_type' => $event->getType(),
             'payload' => [
                 [
                     'name' => 'trip_ticket_id',

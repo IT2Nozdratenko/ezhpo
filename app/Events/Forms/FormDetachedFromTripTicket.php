@@ -27,15 +27,26 @@ class FormDetachedFromTripTicket
     private $tripTicket;
 
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * @var string
      */
-    public function __construct(User $user, Form $form, TripTicket $tripTicket)
-    {
+    private $type;
+
+    /**
+     * @param User $user
+     * @param Form $form
+     * @param TripTicket $tripTicket
+     * @param string $type
+     */
+    public function __construct(
+        User       $user,
+        Form       $form,
+        TripTicket $tripTicket,
+        string     $type
+    ) {
         $this->user = $user;
         $this->form = $form;
         $this->tripTicket = $tripTicket;
+        $this->type = $type;
     }
 
     public function getUser(): User
@@ -51,5 +62,10 @@ class FormDetachedFromTripTicket
     public function getTripTicket(): TripTicket
     {
         return $this->tripTicket;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }

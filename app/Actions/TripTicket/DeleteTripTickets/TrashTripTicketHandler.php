@@ -2,6 +2,7 @@
 
 namespace App\Actions\TripTicket\DeleteTripTickets;
 
+use App\Enums\FormLogActionTypesEnum;
 use App\Events\Forms\FormDetachedFromTripTicket;
 use App\Models\TripTicket;
 use App\User;
@@ -23,12 +24,12 @@ final class TrashTripTicketHandler
         /** Очистка связанных осмотров и сущностей для их разблокировки */
         if ($tripTicket->medicForm) {
             $tripTicket->medic_form_id = null;
-            event(new FormDetachedFromTripTicket($user, $tripTicket->medicForm, $tripTicket));
+            event(new FormDetachedFromTripTicket($user, $tripTicket->medicForm, $tripTicket, FormLogActionTypesEnum::DETACH_FROM_TRIP_TICKET));
         }
 
         if ($tripTicket->techForm) {
             $tripTicket->tech_form_id = null;
-            event(new FormDetachedFromTripTicket($user, $tripTicket->techForm, $tripTicket));
+            event(new FormDetachedFromTripTicket($user, $tripTicket->techForm, $tripTicket, FormLogActionTypesEnum::DETACH_FROM_TRIP_TICKET));
         }
 
         $tripTicket->deleted_at = Carbon::now();

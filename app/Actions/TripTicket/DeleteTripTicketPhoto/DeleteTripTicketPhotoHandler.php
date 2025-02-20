@@ -15,7 +15,7 @@ final class DeleteTripTicketPhotoHandler
 
         $action->getTripTicket()
             ->update([
-                'photos' => $files ?: []
+                'photos' => $files ?? null,
             ]);
     }
 

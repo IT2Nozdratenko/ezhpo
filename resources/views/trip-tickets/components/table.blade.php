@@ -118,14 +118,15 @@
                     @if($permissionToPrintTripTickets)
                         <a class="dropdown-item download-excel-to-print-btn"
                            data-uuid="{{ $tripTicket->uuid }}" style="cursor: pointer">
-                             Печать ПЛ
+                            <i class="fa fa-file-excel-o"></i> Печать ПЛ
                         </a>
                     @endif
                     @if($permissionToDelete)
                         <a
                             href="{{ route('trip-tickets.trash', ['id' => $tripTicket->uuid, 'action' => request()->get('trash') ? 0 : 1]) }}"
-                            class="hv-btn-trash dropdown-item"
-                            data-id="{{ $tripTicket->id }}">
+                            class="hv-btn-trash dropdown-item delete"
+                            data-id="{{ $tripTicket->id }}"
+                            data-action="{{ request()->get('trash') ? 0 : 1 }}">
                             @if(request()->get('trash', 0))
                                 <i class="fa fa-undo"></i> Восстановить
                             @else

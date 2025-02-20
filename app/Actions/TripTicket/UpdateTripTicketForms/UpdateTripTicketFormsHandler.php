@@ -5,6 +5,7 @@ namespace App\Actions\TripTicket\UpdateTripTicketForms;
 use App\Enums\FormLogActionTypesEnum;
 use App\Enums\TripTicketActionType;
 use App\Events\Forms\FormAction;
+use App\Events\Forms\FormDetachedFromTripTicket;
 use App\Events\TripTickets\TripTicketAction;
 use App\Models\Forms\Form;
 use App\Models\TripTicket;
@@ -15,6 +16,7 @@ final class UpdateTripTicketFormsHandler
 {
     public function handle(UpdateTripTicketFormsAction $action): TripTicket
     {
+        $user = Auth::user();
         $tripTicket = $action->getTripTicket();
         $oldMedicForm = $tripTicket->medic_form_id;
         $oldTechForm = $tripTicket->tech_form_id;
@@ -38,11 +40,16 @@ final class UpdateTripTicketFormsHandler
         ]);
 
         if ($oldMedicForm && $action->getMedicForm() === null) {
-            event(new TripTicketAction(Auth::user(), $tripTicket, TripTicketActionType::detachMedicForm()));
+            event(new TripTicketAction($user, $tripTicket, TripTicketActionType::detachMedicForm()));
+            event(new FormDetachedFromTripTicket($user, Form::findOrFail($oldMedicForm), $tripTicket, FormLogActionTypesEnum::DETACH_FROM_TRIP_TICKET));
         }
 
-        if ($action->getMedicForm() !== null && $action->getMedicForm() !== $oldMedicForm) {
-            event(new TripTicketAction(Auth::user(), $tripTicket, TripTicketActionType::attachMedicForm()));
+        if ($action->getMedicForm() !== null && $action->getMedicForm()->id !== $oldMedicForm) {
+            event(new TripTicketAction($user, $tripTicket, TripTicketActionType::attachMedicForm()));
+            if ($oldMedicForm !== null) {
+                event(new FormDetachedFromTripTicket($user, Form::findOrFail($oldMedicForm), $tripTicket, FormLogActionTypesEnum::DETACH_FROM_TRIP_TICKET));
+            }
+            event(new FormDetachedFromTripTicket($user, $action->getMedicForm(), $tripTicket, FormLogActionTypesEnum::ATTACH_TO_TRIP_TICKET));
         }
 
         $tripTicket->save();
@@ -67,11 +74,16 @@ final class UpdateTripTicketFormsHandler
         ]);
 
         if ($oldTechForm && $action->getTechForm() === null) {
-            event(new TripTicketAction(Auth::user(), $tripTicket, TripTicketActionType::detachTechForm()));
+            event(new TripTicketAction($user, $tripTicket, TripTicketActionType::detachTechForm()));
+            event(new FormDetachedFromTripTicket($user, Form::findOrFail($oldTechForm), $tripTicket, FormLogActionTypesEnum::DETACH_FROM_TRIP_TICKET));
         }
 
-        if ($action->getTechForm() !== null && $action->getTechForm() !== $oldTechForm) {
-            event(new TripTicketAction(Auth::user(), $tripTicket, TripTicketActionType::attachTechForm()));
+        if ($action->getTechForm() !== null && $action->getTechForm()->id !== $oldTechForm) {
+            event(new TripTicketAction($user, $tripTicket, TripTicketActionType::attachTechForm()));
+            if ($oldTechForm !== null) {
+                event(new FormDetachedFromTripTicket($user, Form::findOrFail($oldTechForm), $tripTicket, FormLogActionTypesEnum::DETACH_FROM_TRIP_TICKET));
+            }
+            event(new FormDetachedFromTripTicket($user, $action->getTechForm(), $tripTicket, FormLogActionTypesEnum::ATTACH_TO_TRIP_TICKET));
         }
 
         $tripTicket->save();
