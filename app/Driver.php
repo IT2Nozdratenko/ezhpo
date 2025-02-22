@@ -14,6 +14,7 @@ class Driver extends Model
 
     public $fillable = [
         'hash_id',
+        'related_user_id',
         'photo',
         'fio',
         'year_birthday',
@@ -48,6 +49,11 @@ class Driver extends Model
     protected $casts = [
         'date_of_employment' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'related_user_id', 'id');
+    }
 
     public function contracts(): BelongsToMany
     {

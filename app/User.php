@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Enums\FormTypeEnum;
+use App\Enums\UserEntityType;
 use App\Models\Forms\Form;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,6 +29,7 @@ class User extends Authenticatable
 
     public $fillable = [
             'hash_id',
+            'entity_type',
             'req_id',
             'photo',
             'name',
@@ -217,5 +219,27 @@ class User extends Authenticatable
         }
 
         return $userName;
+    }
+
+    public function entity()
+    {
+        switch ($this->entity_type) {
+            case UserEntityType::EMPLOYEE:
+                $relation = $this->hasOne(Employee::class, 'related_user_id', 'id');
+                break;
+            case UserEntityType::TERMINAL:
+                $relation = $this->hasOne(Terminal::class, 'related_user_id', 'id');
+                break;
+            case UserEntityType::COMPANY:
+                $relation = $this->hasOne(Company::class, 'related_user_id', 'id');
+                break;
+            case UserEntityType::DRIVER:
+                $relation = $this->hasOne(Driver::class, 'related_user_id', 'id');
+                break;
+            default:
+                $relation = null;
+        }
+
+        return $relation;
     }
 }

@@ -14,6 +14,7 @@ class Company extends Model
 
     public $fillable = [
         'hash_id',
+        'related_user_id',
         'name',
         'official_name',
         'dismissed',
@@ -58,6 +59,11 @@ class Company extends Model
         }
 
         return self::all();
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'related_user_id', 'id');
     }
 
     public function point(): BelongsTo
