@@ -19,8 +19,8 @@
         "sass": "^1.15.2",
         "sass-loader": "^7.1.0",
         "select2": "^4.0.13",
-        "vue": "^2.6",
-        "vue-template-compiler": "^2.6.12"
+        "vue": "^2.7.16",
+        "vue-template-compiler": "^2.7.16"
     },
     "dependencies": {
         "@fancyapps/ui": "^4.0.8",

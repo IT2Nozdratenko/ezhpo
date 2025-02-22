@@ -2,6 +2,14 @@
 
 namespace App\Providers;
 
+use App\Actions\User\CreateUser\CreateUserCommand;
+use App\Actions\User\CreateUser\CreateUserHandler;
+use App\Actions\User\DeleteUser\DeleteUserCommand;
+use App\Actions\User\DeleteUser\DeleteUserHandler;
+use App\Actions\User\RestoreUser\RestoreUserCommand;
+use App\Actions\User\RestoreUser\RestoreUserHandler;
+use App\Actions\User\UpdateUser\UpdateUserCommand;
+use App\Actions\User\UpdateUser\UpdateUserHandler;
 use App\Anketa;
 use App\Car;
 use App\Company;
@@ -25,7 +33,7 @@ use App\Services\OneC\Reports\GetServicesReportForCompanyByPeriod;
 use App\Services\QRCode\QRCodeGenerator;
 use App\Services\QRCode\QRCodeGeneratorInterface;
 use App\User;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Bus\Dispatcher;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -73,13 +81,17 @@ class AppServiceProvider extends ServiceProvider
         Anketa::observe(AnketaObserver::class);
     }
 
-    private function registerMorphRelations()
+    private function registerCommandHandlers()
     {
-        Relation::morphMap([
-            UserEntityType::EMPLOYEE => Employee::class,
-            UserEntityType::TERMINAL => Terminal::class,
-            UserEntityType::DRIVER   => Driver::class,
-            UserEntityType::COMPANY  => Company::class,
-        ]);
+        $this->app->extend(Dispatcher::class, function (Dispatcher $dispatcher) {
+            $dispatcher->map([
+                CreateUserCommand::class => CreateUserHandler::class,
+                UpdateUserCommand::class => UpdateUserHandler::class,
+                DeleteUserCommand::class => DeleteUserHandler::class,
+                RestoreUserCommand::class => RestoreUserHandler::class,
+            ]);
+
+            return $dispatcher;
+        });
     }
 }

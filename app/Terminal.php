@@ -38,6 +38,11 @@ final class Terminal extends Model
         return $this->belongsTo(User::class, 'related_user_id', 'id');
     }
 
+    public function whoDeleted(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_id', 'id');
+    }
+
     public function pv(): BelongsTo
     {
         return $this->belongsTo(Point::class, 'pv_id')

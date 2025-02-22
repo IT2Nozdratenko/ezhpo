@@ -12,6 +12,7 @@ class TerminalCheck extends Model
 
     protected $fillable = [
         'user_id',
+        'terminal_id',
         'serial_number',
         'date_check',
         'date_end_check'

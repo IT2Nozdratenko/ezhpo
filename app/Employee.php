@@ -45,7 +45,7 @@ final class Employee extends Model
 
     public function pv(): BelongsTo
     {
-        return $this->belongsTo(Point::class, 'pv_id')->withDefault();
+        return $this->belongsTo(Point::class, 'pv_id', 'id')->withDefault();
     }
 
     public function points(): BelongsToMany

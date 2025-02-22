@@ -3,6 +3,7 @@
     use Illuminate\Support\Facades\Cache;
     use App\Models\Forms\Form;
     use App\Services\Terminals\TerminalsToCheckService;
+    use App\Actions\Terminals\GetTerminalsToCheck\GetTerminalsToCheckQuery;
 
     /** @var \App\User $user */
     $user = \Illuminate\Support\Facades\Auth::user();
@@ -320,6 +321,12 @@
 
                             $lessMonthCount = count($needToCheck['less_month']);
                             $expiredCount = count($needToCheck['expired']);
+
+//                            $query = new GetTerminalsToCheckQuery();
+//                            $terminalsToCheckViewModel = $query->get();
+//
+//                            $lessMonthCount = count($terminalsToCheckViewModel->getLessMonth());
+//                            $expiredCount = count($terminalsToCheckViewModel->getExpired());
                         @endphp
                         <li>
                             <a href="{{ route('terminals.index') }}">

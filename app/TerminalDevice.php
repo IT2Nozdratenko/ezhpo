@@ -12,6 +12,7 @@ class TerminalDevice extends Model
 
     protected $fillable = [
         'user_id',
+        'terminal_id',
         'device_name',
         'device_serial_number',
     ];

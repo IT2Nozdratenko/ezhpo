@@ -242,4 +242,15 @@ class User extends Authenticatable
 
         return $relation;
     }
+
+    public function getEntityName()
+    {
+        $entity = $this->entity;
+
+        if (!$entity) {
+            return null;
+        }
+
+        return $this->entity_type === UserEntityType::DRIVER ? $entity->fio : $entity->name;
+    }
 }
