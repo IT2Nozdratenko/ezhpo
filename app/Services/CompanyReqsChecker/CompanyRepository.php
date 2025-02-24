@@ -16,7 +16,7 @@ class CompanyRepository
             })
             ->where(function ($query) use ($companyReqs) {
                 $query
-                    ->when($companyReqs->isOrganizationFormat(), function ($query) use ($companyReqs) {
+                    ->when($companyReqs->isValidFormat(), function ($query) use ($companyReqs) {
                         $query->where('ogrn', $companyReqs->getOgrn());
                     })
                     ->orWhere(function ($subQuery) use ($companyReqs) {
