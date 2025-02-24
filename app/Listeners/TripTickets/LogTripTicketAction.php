@@ -2,7 +2,7 @@
 
 namespace App\Listeners\TripTickets;
 
-use App\Events\TripTickets\TripTicketAction;
+use App\Events\TripTickets\LogTripTicket;
 use App\Models\TripTicketLog;
 
 class LogTripTicketAction
@@ -20,10 +20,10 @@ class LogTripTicketAction
     /**
      * Handle the event.
      *
-     * @param TripTicketAction $event
+     * @param LogTripTicket $event
      * @return void
      */
-    public function handle(TripTicketAction $event)
+    public function handle(LogTripTicket $event)
     {
         $logData = $this->logModel($event->getTripTicket());
 

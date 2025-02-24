@@ -4,6 +4,7 @@ namespace App\Actions\TripTicket\CreateTripTickets;
 
 use App\Actions\TripTicket\TripTicketNumberGenerator;
 use App\Enums\FormTypeEnum;
+use App\Enums\TripTicketStatus;
 use App\Models\Forms\Form;
 use App\Models\TripTicket;
 use App\ValueObjects\EntityId;
@@ -144,6 +145,7 @@ final class TripTicketsHandler extends TripTicketNumberGenerator
             'transportation_type' => $action->getTransportationType(),
             'template_code' => $action->getTemplateCode(),
             'user_id' => Auth::user()->id,
+            'status' => TripTicketStatus::CREATED,
         ]);
     }
 }

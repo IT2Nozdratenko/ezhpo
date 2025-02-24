@@ -7,7 +7,8 @@ use App\Events\Forms\FormAction;
 use App\Events\Forms\FormDetachedFromTripTicket;
 use App\Events\Relations\Attached;
 use App\Events\Relations\Detached;
-use App\Events\TripTickets\TripTicketAction;
+use App\Events\TripTickets\LogTripTicket;
+use App\Events\TripTickets\ChangeTripTicketStatus;
 use App\Events\UserActions\ClientActionLogRequest;
 use App\Events\UserActions\ClientAddRecord;
 use App\Events\UserActions\ClientDocExport;
@@ -20,6 +21,7 @@ use App\Listeners\Forms\LogFormActions;
 use App\Listeners\Forms\NotifyDismissingSMS;
 use App\Listeners\LogAttachedEvent;
 use App\Listeners\LogDetachedEvent;
+use App\Listeners\TripTickets\ChangeTripTicketStatusAction;
 use App\Listeners\TripTickets\LogTripTicketAction;
 use App\Listeners\UserActions\LogClientLoginEvent;
 use App\Listeners\UserActions\LogUserActionEvent;
@@ -76,8 +78,11 @@ class EventServiceProvider extends ServiceProvider
         FormDetachedFromTripTicket::class => [
             LogFormDetachFromTripTicket::class
         ],
-        TripTicketAction::class => [
+        LogTripTicket::class => [
             LogTripTicketAction::class,
+        ],
+        ChangeTripTicketStatus::class => [
+            ChangeTripTicketStatusAction::class,
         ],
     ];
 

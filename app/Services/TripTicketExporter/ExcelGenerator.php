@@ -2,7 +2,9 @@
 
 namespace App\Services\TripTicketExporter;
 
+use App\Enums\TripTicketStatus;
 use App\Enums\TripTicketTemplateEnum;
+use App\Events\TripTickets\ChangeTripTicketStatus;
 use App\Models\TripTicket;
 use App\Services\TripTicketExporter\Mappers\ItemMapperStrategy;
 use App\Services\TripTicketExporter\SheetWriters\SheetWriterStrategy;
@@ -125,6 +127,10 @@ final class ExcelGenerator
         foreach ($this->templateSheetNames() as $sheetName) {
             $sheet = $spreadsheet->getSheetByName($sheetName);
             $spreadsheet->removeSheetByIndex($spreadsheet->getIndex($sheet));
+        }
+
+        foreach ($tripTickets as $tripTicket) {
+            event(new ChangeTripTicketStatus($tripTicket, TripTicketStatus::printed()));
         }
 
         return new Xlsx($spreadsheet);

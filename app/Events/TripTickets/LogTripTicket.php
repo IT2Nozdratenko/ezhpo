@@ -7,7 +7,7 @@ use App\Models\TripTicket;
 use App\User;
 use Illuminate\Queue\SerializesModels;
 
-class TripTicketAction
+class LogTripTicket
 {
     use SerializesModels;
 
