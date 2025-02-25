@@ -13,6 +13,19 @@ use Http\Client\Common\Exception\HttpClientNotFoundException;
 final class GetFormVerificationDetailsQuery
 {
     /**
+     * @var GetTripTicketDetailsQuery
+     */
+    private $tripTicketQuery;
+
+    /**
+     * @param GetTripTicketDetailsQuery $tripTicketQuery
+     */
+    public function __construct(GetTripTicketDetailsQuery $tripTicketQuery)
+    {
+        $this->tripTicketQuery = $tripTicketQuery;
+    }
+
+    /**
      * @throws ExpiredFormPeriodPlException
      */
     public function get(GetFormVerificationDetailsParams $params): FormVerificationDetails
@@ -29,7 +42,7 @@ final class GetFormVerificationDetailsQuery
         $formPeriod = null;
         $driverName = null;
         $carGosNumber = null;
-        $tripTicketId = null;
+        $tripTicketDetails = null;
 
         if ($form->deleted_at !== null) {
             $verified = false;
@@ -67,11 +80,7 @@ final class GetFormVerificationDetailsQuery
                 $carGosNumber = $form->details->car->gos_number;
             }
 
-            $tripTicket = TripTicket::where('medic_form_id', '=', $form->id)->first();
-
-            if ($tripTicket) {
-                $tripTicketId = $tripTicket->uuid;
-            }
+            $tripTicketDetails = $this->tripTicketQuery->get($form);
         }
 
         return new FormVerificationDetails(
@@ -85,7 +94,7 @@ final class GetFormVerificationDetailsQuery
             $formPeriod,
             $driverName,
             $carGosNumber,
-            $tripTicketId
+            $tripTicketDetails
         );
     }
 }

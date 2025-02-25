@@ -28,6 +28,6 @@ class TripTicketAttachPhotosController extends Controller
                 ->withErrors([$exception->getMessage()]);
         }
 
-        return redirect()->route('trip-tickets.attach-photos-page', ['id' => $tripTicketId]);
+        return redirect()->route('anketa.verification.page', ['uuid' => $tripTicket->medicForm->uuid]);
     }
 }

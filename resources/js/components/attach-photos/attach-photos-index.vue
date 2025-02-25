@@ -98,14 +98,16 @@ export default {
 
 <template>
   <div>
-    <div class="input-group mt-3 mb-3">
+    <div class="col-12 text-center mt-3">
+      <b>Загрузка фото:</b>
+    </div>
+    <div class="input-group text-left mt-1 mb-3">
       <div class="custom-file">
         <input
             type="file"
             class="custom-file-input"
             id="photo"
             accept="image/jpeg, image/png, application/pdf"
-            capture="environment"
             name="photos[]"
             multiple
             @change="changePhoto"
@@ -117,9 +119,9 @@ export default {
     <div v-if="this.items.length" id="preview" class="d-flex flex-column mt-3">
       <p><b>Загруженные на сервер фото:</b></p>
 
-      <div v-for="(photo, index) in this.items" class="row photo-item-div">
+      <div v-for="(photo, index) in this.items" class="row photo-item-div text-left">
         <div class="col-md-12 input-group d-flex justify-content-between align-items-center">
-          <a class="form-control" :href="photo.url" target="_blank">{{ photo.original_name }}</a>
+          <a class="form-control truncate-text" :href="photo.url" target="_blank">{{ photo.original_name }}</a>
 
           <div class="input-group-append">
             <button
@@ -137,9 +139,9 @@ export default {
     <div v-if="this.photos.length" id="preview" class="d-flex flex-column mt-3">
       <p><b>Фото для загрузки:</b></p>
 
-      <div v-for="(photo, index) in this.photos" class="row photo-item-div">
+      <div v-for="(photo, index) in this.photos" class="row photo-item-div text-left">
         <div class="col-md-12 input-group">
-          <input type="text" class="form-control" :value="photo.name" :title="photo.name" :aria-describedby="'remove-photo-'+index" disabled>
+          <input type="text" class="form-control truncate-text" :value="photo.name" :title="photo.name" :aria-describedby="'remove-photo-'+index" disabled>
           <div class="input-group-append">
             <button
                 class="btn btn-outline-danger"
@@ -153,9 +155,9 @@ export default {
       </div>
     </div>
 
-    <div class="form-group row mb-0 mt-3">
-      <a href="/" class="m-center btn btn-sm btn-info">Главная</a>
-      <button type="submit" class="m-center btn btn-sm btn-success submit-btn" :disabled="enableSaveBtn">Сохранить
+    <div class="form-group row mb-0 mt-3 d-flex justify-content-center">
+      <a href="/" class="btn btn-sm btn-info">Главная</a>
+      <button type="submit" class="btn btn-sm btn-success submit-btn ml-2" :disabled="enableSaveBtn">Сохранить
       </button>
     </div>
   </div>
@@ -176,5 +178,11 @@ export default {
   background-color: #fff;
   border: 1px solid #ced4da;
   border-radius: .25rem;
+}
+
+.truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
