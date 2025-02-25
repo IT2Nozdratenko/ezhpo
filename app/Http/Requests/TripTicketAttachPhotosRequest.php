@@ -10,7 +10,7 @@ class TripTicketAttachPhotosRequest extends FormRequest
     {
         return [
             'photos' => 'required|array',
-            'photos.*' => 'file|mimes:jpeg,jpg,png,pdf|max:8192',
+            'photos.*' => 'file|mimes:jpeg,jpg,JPEG,JPG,png,PNG,pdf|max:8192',
         ];
     }
 

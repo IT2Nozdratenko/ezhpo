@@ -113,7 +113,7 @@ export default {
             type="file"
             class="custom-file-input"
             id="photo"
-            accept="image/jpeg, image/png, application/pdf"
+            accept="image/jpeg, image/jpg, image/png, application/pdf"
             name="photos[]"
             multiple
             @change="changePhoto"

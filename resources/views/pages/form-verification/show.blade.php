@@ -153,7 +153,7 @@
                                                 href="{{ route('forms.trash', ['id' => $details->getFormId(), 'action' => 1]) }}"
                                                 class="btn btn-warning btn-sm hv-btn-trash mr-1"
                                                 data-id="{{ $details->getFormId() }}">
-                                                Удалить <i class="fa fa-trash ml-1"></i>
+                                                Удалить осмотр <i class="fa fa-trash ml-1"></i>
                                             </a>
                                         @endif
                                     @endauth
