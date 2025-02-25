@@ -49,19 +49,25 @@ export default {
             icon: 'error'
           })
 
+          this.setPhotos(this.photos)
+
           return
         }
-        this.photos = newPhotos
 
-        const dataTransfer = new DataTransfer()
-
-        this.photos.forEach(file => {
-          dataTransfer.items.add(file)
-        })
-
-        const fileInput = $('.custom-file-input')[0]
-        fileInput.files = dataTransfer.files
+        this.setPhotos(newPhotos)
       }
+    },
+    setPhotos(photos) {
+      this.photos = photos
+
+      const dataTransfer = new DataTransfer()
+
+      this.photos.forEach(file => {
+          dataTransfer.items.add(file)
+      })
+
+      const fileInput = $('.custom-file-input')[0]
+      fileInput.files = dataTransfer.files
     },
     removeOld(path) {
       const url = '/trip-tickets/'+this.id+'/delete-photo'
